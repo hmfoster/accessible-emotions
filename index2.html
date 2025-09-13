@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Emotion Mapper (Data-Driven)</title>
+  <style>
+    .hidden { display: none; }
+    fieldset { margin-bottom: 1.25rem; }
+    h1,h2,h3,h4 { margin: .3rem 0; }
+    .summary { border-top: 2px solid #ccc; padding-top: 1rem; margin-top: 1rem; }
+    button { margin-top: .5rem; margin-right: .5rem; }
+    .sr-only {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <main role="main">
+    <h1>Emotion Identification Tool</h1>
+    <p>Step through the form with keyboard or screen reader.</p>
+
+    <form id="emotionForm" onsubmit="return false;">
+      <!-- Step 1 -->
+      <fieldset id="step1">
+        <legend>1. I Notice...</legend>
+        <div id="sensationsContainer"></div>
+        <button type="button" id="step1Btn">Next</button>
+      </fieldset>
+
+      <!-- Step 2 -->
+      <fieldset id="step2" class="hidden" aria-live="polite" aria-atomic="true">
+        <legend class="sr-only">2. Core Emotions</legend>
+        <div id="emotionContainer" role="region" aria-label="Current core emotion"></div>
+        <button type="button" id="prevEmotionBtn" aria-controls="emotionContainer">Back</button>
+        <button type="button" id="nextEmotionBtn" aria-controls="emotionContainer">Next Emotion</button>
+      </fieldset>
+
+      <!-- Summary -->
+      <div id="summary" class="summary hidden" role="region" aria-label="Summary" aria-live="polite"></div>
+    </form>
+  </main>
+
+  <script>
+    let dataset = {};
+
+    async function loadDataset() {
+      const response = await fetch('dataset.json');
+      dataset = await response.json();
+      generateSensations();
+    }
+
+    const sensationsContainer = document.getElementById('sensationsContainer');
+    const step1 = document.getElementById('step1');
+    const step1Btn = document.getElementById('step1Btn');
+    const step2 = document.getElementById('step2');
+    const emotionContainer = document.getElementById('emotionContainer');
+    const nextEmotionBtn = document.getElementById('nextEmotionBtn');
+    const prevEmotionBtn = document.getElementById('prevEmotionBtn');
+    const summary = document.getElementById('summary');
+
+    let matchedEmotions = [];
+    let currentEmotionIndex = 0;
+    const selections = {
+      sensationValues: [],
+      sensations: [],
+      nuanced: {},
+      needs: {}
+    };
+
+    function generateSensations() {
+      sensationsContainer.innerHTML = '';
+      Object.entries(dataset.sensations).forEach(([part, arr]) => {
+        const h2 = document.createElement('h2');
+        h2.textContent = part.charAt(0).toUpperCase() + part.slice(1);
+        sensationsContainer.appendChild(h2);
+
+        arr.forEach(s => {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.value = s;
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(' ' + s.replace(/-/g, ' ')));
+          sensationsContainer.appendChild(label);
+          sensationsContainer.appendChild(document.createElement('br'));
+        });
+      });
+    }
+
+    function buildValueToLabelMap(){
+      const map = {};
+      document.querySelectorAll('#step1 input[type="checkbox"]').forEach(cb=>{
+        map[cb.value] = cb.parentElement.textContent.trim();
+      });
+      return map;
+    }
+
+    step1Btn.addEventListener('click', () => {
+      const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
+      selections.sensationValues = checked.map(cb => cb.value);
+      selections.sensations = checked.map(cb => cb.parentElement.textContent.trim());
+
+      matchedEmotions = dataset.emotions.filter(emotion =>
+        emotion.sensations.some(s => selections.sensationValues.includes(s))
+      );
+
+      if (matchedEmotions.length === 0) {
+        summary.classList.remove('hidden');
+        summary.innerHTML = `<h2 id="summaryHeading" tabindex="-1">Summary</h2>
+          <p>No core emotions matched your sensations.</p>`;
+        document.getElementById('summaryHeading').focus();
+        return;
+      }
+
+      step1.classList.add('hidden');
+      step2.classList.remove('hidden');
+      currentEmotionIndex = 0;
+      renderEmotion();
+    });
+
+    function renderEmotion(){
+      const emotion = matchedEmotions[currentEmotionIndex];
+      const valueToLabel = buildValueToLabelMap();
+      emotionContainer.innerHTML = '';
+
+      const h2 = document.createElement('h2');
+      h2.textContent = "2. I might be feeling…";
+      h2.tabIndex = -1;
+      emotionContainer.appendChild(h2);
+
+      const h3 = document.createElement('h3');
+      h3.textContent = emotion.label;
+      emotionContainer.appendChild(h3);
+
+      const live = document.createElement('div');
+      live.className = 'sr-only';
+      live.setAttribute('aria-live','assertive');
+      live.textContent = `Now showing ${emotion.label}`;
+      emotionContainer.appendChild(live);
+
+      const allLabels = emotion.sensations.map(v => valueToLabel[v] || v);
+      const correlatedValues = emotion.sensations.filter(v => selections.sensationValues.includes(v));
+      const correlatedLabels = correlatedValues.map(v => valueToLabel[v] || v);
+      const p = document.createElement('p');
+      p.textContent = "Often embodied as: " + allLabels.join(', ') +
+                      (correlatedLabels.length ? ". Correlated with your selections: " + correlatedLabels.join(', ') : "");
+      emotionContainer.appendChild(p);
+
+      if (!Array.isArray(selections.nuanced[emotion.key])) selections.nuanced[emotion.key] = [];
+      if (!Array.isArray(selections.needs[emotion.key])) selections.needs[emotion.key] = [];
+
+      const nuanceLegend = document.createElement('h4');
+      nuanceLegend.textContent = "3. More specifically, I feel:";
+      emotionContainer.appendChild(nuanceLegend);
+      emotion.nuanced.forEach(n => {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.dataset.type = 'nuanced';
+        cb.dataset.emotion = emotion.key;
+        cb.value = n;
+        if (selections.nuanced[emotion.key].includes(n)) cb.checked = true;
+
+        const lbl = document.createElement('label');
+        lbl.appendChild(cb);
+        lbl.appendChild(document.createTextNode(' ' + n));
+        emotionContainer.appendChild(lbl);
+        emotionContainer.appendChild(document.createElement('br'));
+      });
+
+      const needsLegend = document.createElement('h4');
+      needsLegend.textContent = "4. I might need:";
+      emotionContainer.appendChild(needsLegend);
+      emotion.needs.forEach(n => {
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.dataset.type = 'need';
+        cb.dataset.emotion = emotion.key;
+        cb.value = n;
+        if (selections.needs[emotion.key].includes(n)) cb.checked = true;
+
+        const lbl = document.createElement('label');
+        lbl.appendChild(cb);
+        lbl.appendChild(document.createTextNode(' ' + n));
+        emotionContainer.appendChild(lbl);
+        emotionContainer.appendChild(document.createElement('br'));
+      });
+
+      nextEmotionBtn.textContent = currentEmotionIndex < matchedEmotions.length - 1 ? 'Next Emotion' : 'See Summary';
+      setTimeout(()=> h2.focus(), 0);
+    }
+
+    function saveCurrentSelections() {
+      const emotion = matchedEmotions[currentEmotionIndex];
+      selections.nuanced[emotion.key] = Array.from(document.querySelectorAll(`input[data-type="nuanced"][data-emotion="${emotion.key}"]:checked`)).map(cb=>cb.value);
+      selections.needs[emotion.key] = Array.from(document.querySelectorAll(`input[data-type="need"][data-emotion="${emotion.key}"]:checked`)).map(cb=>cb.value);
+    }
+
+    nextEmotionBtn.addEventListener('click', () => {
+      saveCurrentSelections();
+      if (currentEmotionIndex < matchedEmotions.length - 1) {
+        currentEmotionIndex++;
+        renderEmotion();
+      } else {
+        step2.classList.add('hidden');
+        renderSummary();
+      }
+    });
+
+    prevEmotionBtn.addEventListener('click', () => {
+      saveCurrentSelections();
+      if (currentEmotionIndex > 0) {
+        currentEmotionIndex--;
+        renderEmotion();
+      } else {
+        step2.classList.add('hidden');
+        step1.classList.remove('hidden');
+        const firstStep1Input = step1.querySelector('input[type="checkbox"]');
+        if (firstStep1Input) setTimeout(()=> firstStep1Input.focus(), 0);
+      }
+    });
+
+    function renderSummary(){
+      saveCurrentSelections(); // save last emotion selections
+      summary.innerHTML = ''; // clear previous
+
+      const heading = document.createElement('h2');
+      heading.id = 'summaryHeading';
+      heading.tabIndex = -1;
+      heading.textContent = '5. To summarize, right now…';
+      summary.appendChild(heading);
+
+      const pNotice = document.createElement('p');
+      pNotice.textContent = `I notice: ${selections.sensations.join(', ') || 'nothing selected'}.`;
+      summary.appendChild(pNotice);
+
+      const selectedNuanced = Object.entries(selections.nuanced).filter(([,arr])=>arr.length).map(([k,arr]) => ({k,arr}));
+      const selectedNeeds = Object.entries(selections.needs).filter(([,arr])=>arr.length).map(([k,arr]) => ({k,arr}));
+
+      if (selectedNuanced.length) {
+        const ul = document.createElement('ul');
+        selectedNuanced.forEach(({k,arr})=>{
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${dataset.emotions.find(e=>e.key===k).label}:</strong> ${arr.join(', ')}`;
+          ul.appendChild(li);
+        });
+        summary.appendChild(document.createElement('h3')).textContent = 'Specifically, by emotion:';
+        summary.appendChild(ul);
+      }
+
+      if (selectedNeeds.length) {
+        const ul = document.createElement('ul');
+        selectedNeeds.forEach(({k,arr})=>{
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${dataset.emotions.find(e=>e.key===k).label}:</strong> ${arr.join(', ')}`;
+          ul.appendChild(li);
+        });
+        summary.appendChild(document.createElement('h3')).textContent = 'Identified needs (by emotion):';
+        summary.appendChild(ul);
+      }
+
+      const matchedLabels = matchedEmotions.map(e=>e.label);
+      if (matchedLabels.length) {
+        const pEmotions = document.createElement('p');
+        pEmotions.textContent = `Core emotions suggested by your sensations: ${matchedLabels.join(', ')}.`;
+        summary.appendChild(pEmotions);
+      }
+
+      // Add Back button
+      const backBtn = document.createElement('button');
+      backBtn.type = 'button';
+      backBtn.textContent = 'Back';
+      backBtn.addEventListener('click', () => {
+        summary.classList.add('hidden');
+        step2.classList.remove('hidden');
+        renderEmotion();
+      });
+      summary.appendChild(backBtn);
+
+      setTimeout(()=> heading.focus(), 0);
+      summary.classList.remove('hidden');
+    }
+
+    loadDataset();
+  </script>
+</body>
+</html>
