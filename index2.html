@@ -70,6 +70,10 @@
       needs: {}
     };
 
+    // create functions to use data object better
+    // one to combine all sensations under each part of the body
+    // one to combine all sensations for a given emotion into one array
+
     function generateSensations() {
       sensationsContainer.innerHTML = '';
       const h2 = document.createElement('h2');
@@ -77,6 +81,7 @@
       h2.tabIndex = -1;
       sensationsContainer.appendChild(h2);
 
+      // Need to edit this to  match the new data model
       Object.entries(dataset.sensations).forEach(([part, arr]) => {
         const h3 = document.createElement('h3');
         h3.textContent = part.charAt(0).toUpperCase() + part.slice(1);
@@ -105,9 +110,14 @@
 
     step1Btn.addEventListener('click', () => {
       const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
+
+      //array of things like "clenched-jaw"
       selections.sensationValues = checked.map(cb => cb.value);
+
+      //array of same sensations, but without the dash ("clenched jaw")
       selections.emotions = checked.map(cb => cb.parentElement.textContent.trim());
 
+      // need to modify this for new data format
       matchedEmotions = dataset.emotions.filter(emotion =>
         emotion.sensations.some(sensation => selections.sensationValues.includes(sensation))
       );
@@ -128,7 +138,10 @@
     });
 
     function renderEmotion(){
+      // need to modify for new data format
       const emotion = matchedEmotions[currentEmotionIndex];
+
+      // ex: {furrowed-brow: "furrowed brow"} not sure why... seems maybe overcomplicated?
       const valueToLabel = buildValueToLabelMap();
       emotionContainer.innerHTML = '';
 
@@ -138,15 +151,18 @@
       emotionContainer.appendChild(h2);
 
       const h3 = document.createElement('h3');
+      //to modify
       h3.textContent = emotion.label;
       emotionContainer.appendChild(h3);
 
       const live = document.createElement('div');
       live.className = 'sr-only';
       live.setAttribute('aria-live','assertive');
+      //to modify
       live.textContent = `Now showing ${emotion.label}`;
       emotionContainer.appendChild(live);
 
+      //why like this??
       const allLabels = emotion.sensations.map(v => valueToLabel[v] || v);
       // const correlatedValues = emotion.sensations.filter(v => selections.sensationValues.includes(v));
       // const correlatedLabels = correlatedValues.map(v => valueToLabel[v] || v);
@@ -156,12 +172,15 @@
                       "";
       emotionContainer.appendChild(p);
 
+      //might need to modify with new data format (emotion.key)
       if (!Array.isArray(selections.nuanced[emotion.key])) selections.nuanced[emotion.key] = [];
       if (!Array.isArray(selections.needs[emotion.key])) selections.needs[emotion.key] = [];
 
       const nuanceLegend = document.createElement('h4');
       nuanceLegend.textContent = "Specifically...";
       emotionContainer.appendChild(nuanceLegend);
+
+      //might need to modify
       emotion.nuanced.forEach(n => {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -177,6 +196,7 @@
         emotionContainer.appendChild(document.createElement('br'));
       });
 
+      //can probably make a function for all these checkboxes instead of doing the same thing 3 times
       const needsLegend = document.createElement('h4');
       needsLegend.textContent = "I need...";
       emotionContainer.appendChild(needsLegend);
@@ -239,6 +259,7 @@
       heading.textContent = 'My current emotions are...';
       summaryContainer.appendChild(heading);
 
+      //everthing below here needs to be reworked
       const pNotice = document.createElement('p');
       pNotice.textContent = `I notice: ${selections.emotions.join(', ') || 'nothing selected'}.`;
       summaryContainer.appendChild(pNotice);

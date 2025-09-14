@@ -1,0 +1,62 @@
+{
+  "Anger": {
+    "sensations": {
+      "head": ["furrowed-brow", "clenched-jaw","hot-face"],
+      "torso":["tight-shoulders","tight-abs"],
+      "limbs":["warm-hands","flexed-biceps","clenched-fists","curled-toes"]
+    },
+    "nuanced-emotions":["tense","annoyed","frustrated","skeptical","loyal","protective","resistant","defensive","resentful","activated","hateful","rage","something else"],
+    "core-need": "something to move or change",
+    "nuanced-needs": ["more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","a snack/more glucose","something else"]
+  },
+  "Fear": {
+      "sensations": {
+      "head": [],
+      "torso":[],
+      "limbs":[]
+    },
+    "nuanced-emotions":[],
+    "core-need": "",
+    "nuanced-needs": ["something else"]
+  },
+  "Sadness": {
+      "sensations": {
+      "head": [],
+      "torso":[],
+      "limbs":[]
+    },
+    "nuanced-emotions":[],
+    "core-need": "",
+    "nuanced-needs": ["something else"]
+  },
+  "Disgust": {
+      "sensations": {
+      "head": [],
+      "torso":[],
+      "limbs":[]
+    },
+    "nuanced-emotions":[],
+    "core-need": "",
+    "nuanced-needs": ["something else"]
+  },
+  "Joy": {
+      "sensations": {
+      "head": [],
+      "torso":[],
+      "limbs":[]
+    },
+    "nuanced-emotions":[],
+    "core-need": "",
+    "nuanced-needs": ["something else"]
+  },
+  "Genius/Inspired": {
+      "sensations": {
+      "head": [],
+      "torso":[],
+      "limbs":[]
+    },
+    "nuanced-emotions":[],
+    "core-need": "",
+    "nuanced-needs": ["something else"]
+  }
+}
