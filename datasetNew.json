@@ -5,9 +5,9 @@
       "torso":["tight-shoulders","tight-abs"],
       "limbs":["warm-hands","flexed-biceps","clenched-fists","curled-toes"]
     },
-    "nuanced-emotions":["tense","annoyed","frustrated","skeptical","loyal","protective","resistant","defensive","resentful","activated","hateful","rage","something else"],
-    "core-need": "something to move or change",
-    "nuanced-needs": ["more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","a snack/more glucose","something else"]
+    "nuancedEmotions":["tense","annoyed","frustrated","skeptical","loyal","protective","resistant","defensive","resentful","activated","hateful","rage","something else"],
+    "coreNeed": "something to move or change",
+    "nuancedNeeds": ["more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","a snack/more glucose","something else"]
   },
   "Fear": {
       "sensations": {
@@ -15,9 +15,9 @@
       "torso":["pounding-heart","shallow-breath","tight-chest","butterflies","sensitivity-to-touch"],
       "limbs":["cold-hands","cold-feet","fidgety-hands-and-feet"]
     },
-    "nuanced-emotions":["worried","nervous","busy","overwhelmed","stressed","imposter-syndrome","fixated","anxious","intimidated","insecure","panic","terrified","something-else"],
-    "core-need": "a greater sense of safety",
-    "nuanced-needs": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
+    "nuancedEmotions":["worried","nervous","busy","overwhelmed","stressed","imposter-syndrome","fixated","anxious","intimidated","insecure","panic","terrified","something-else"],
+    "coreNeed": "a greater sense of safety",
+    "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
   },
   "Sadness": {
       "sensations": {
@@ -25,9 +25,9 @@
       "torso":[],
       "limbs":[]
     },
-    "nuanced-emotions":[],
-    "core-need": "",
-    "nuanced-needs": ["something else"]
+    "nuancedEmotions":[],
+    "coreNeed": "",
+    "nuancedNeeds": ["something else"]
   },
   "Disgust": {
       "sensations": {
@@ -35,9 +35,9 @@
       "torso":[],
       "limbs":[]
     },
-    "nuanced-emotions":[],
-    "core-need": "",
-    "nuanced-needs": ["something else"]
+    "nuancedEmotions":[],
+    "coreNeed": "",
+    "nuancedNeeds": ["something else"]
   },
   "Joy": {
       "sensations": {
@@ -45,9 +45,9 @@
       "torso":[],
       "limbs":[]
     },
-    "nuanced-emotions":[],
-    "core-need": "",
-    "nuanced-needs": ["something else"]
+    "nuancedNmotions":[],
+    "coreNeed": "",
+    "nuancedNeeds": ["something else"]
   },
   "Genius/Inspired": {
       "sensations": {
@@ -55,8 +55,8 @@
       "torso":[],
       "limbs":[]
     },
-    "nuanced-emotions":[],
-    "core-need": "",
-    "nuanced-needs": ["something else"]
+    "nuancedEmotions":[],
+    "coreNeed": "",
+    "nuancedNeeds": ["something else"]
   }
 }

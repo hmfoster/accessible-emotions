@@ -45,29 +45,30 @@
 
   <script>
     let dataset = {};
-    let newDataset = {};
-    // {bodyPart: {sensation: emotion, sensation: emotion}}
-    let allSensations = {};
+    let emotionData = {};
+    let partSensations = {};
+    let sensationEmotions = {};
 
     async function loadDataset() {
       const response = await fetch('dataset.json');
       dataset = await response.json();
 
       const newResponse = await fetch('datasetNew.json');
-      newDataset = await newResponse.json();
+      emotionData = await newResponse.json();
 
-      //invert data object to sensation : emotion
       let sensations, sensation;
-      for (const emotion in newDataset){
-        sensations = newDataset[emotion].sensations;
+      for (const emotion in emotionData){
+        sensations = emotionData[emotion].sensations;
         for (const bodyPart in sensations){
-          if (allSensations[bodyPart] === undefined) {
-            allSensations[bodyPart] = {};
+          if (partSensations[bodyPart] === undefined) {
+            partSensations[bodyPart] = [];
           }
           sensations[bodyPart].forEach(sensation => {
-            allSensations[bodyPart][sensation] = emotion;
+            partSensations[bodyPart].push(sensation);
+            sensationEmotions[sensation] = emotion;
           });
         }
+        emotionData[emotion].sensations = Object.values(sensations).flat();
       }
       generateSensations();
     }
@@ -81,10 +82,10 @@
     const prevEmotionBtn = document.getElementById('prevEmotionBtn');
     const summaryContainer = document.getElementById('summary');
 
-    let matchedEmotions = [];
     let currentEmotionIndex = 0;
     const selections = {
       sensationValues: [],
+      sensationText: [],
       emotions: [],
       nuanced: {},
       needs: {}
@@ -98,12 +99,12 @@
       h2.tabIndex = -1;
       sensationsContainer.appendChild(h2);
 
-      for (part in allSensations){
+      for (part in partSensations){
         const h3 = document.createElement('h3');
         h3.textContent = part.charAt(0).toUpperCase() + part.slice(1);
         sensationsContainer.appendChild(h3);
 
-        Object.keys(allSensations[part]).forEach(sensation => {
+        partSensations[part].forEach(sensation => {
           const label = document.createElement('label');
           const input = document.createElement('input');
           input.type = 'checkbox';
@@ -127,21 +128,19 @@
 
     step1Btn.addEventListener('click', () => {
       const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
-
       //array of things like "clenched-jaw"
       selections.sensationValues = checked.map(cb => cb.value);
-
       //array of same sensations, but without the dash ("clenched jaw")
-      selections.emotions = checked.map(cb => cb.parentElement.textContent.trim());
+      selections.sensationText = checked.map(cb => cb.parentElement.textContent.trim());
 
-      // need to modify this for new data format
-      matchedEmotions = dataset.emotions.filter(emotion =>
-        emotion.sensations.some(sensation => selections.sensationValues.includes(sensation))
-      );
+      let matchedEmotions = new Set();
+      selections.sensationValues.forEach(sensation => {
+        matchedEmotions.add(sensationEmotions[sensation]);
+      })
 
       step1.classList.add('hidden');
 
-      if (matchedEmotions.length === 0) {
+      if (matchedEmotions.size === 0) {
         summaryContainer.classList.remove('hidden');
         summaryContainer.innerHTML = `<h2 id="summaryHeading" tabindex="-1">Summary</h2>
           <p>You did not select any sensations. Refresh the page to start over.</p>`;
@@ -150,13 +149,17 @@
       }
 
       step2.classList.remove('hidden');
+
+      selections.emotions = [...matchedEmotions];
       currentEmotionIndex = 0;
+      console.log(selections)
       renderEmotion();
     });
 
     function renderEmotion(){
       // need to modify for new data format
-      const emotion = matchedEmotions[currentEmotionIndex];
+      const emotion = selections.emotions[currentEmotionIndex];
+      const currentEmotionData = emotionData[emotion];
 
       // ex: {furrowed-brow: "furrowed brow"} not sure why... seems maybe overcomplicated?
       const valueToLabel = buildValueToLabelMap();
@@ -168,28 +171,26 @@
       emotionContainer.appendChild(h2);
 
       const h3 = document.createElement('h3');
-      //to modify
-      h3.textContent = emotion.label;
+      h3.textContent = emotion;
       emotionContainer.appendChild(h3);
 
       const live = document.createElement('div');
       live.className = 'sr-only';
       live.setAttribute('aria-live','assertive');
       //to modify
-      live.textContent = `Now showing ${emotion.label}`;
+      live.textContent = `Now showing ${emotion}`;
       emotionContainer.appendChild(live);
 
-      //why like this??
-      const allLabels = emotion.sensations.map(v => valueToLabel[v] || v);
-      // const correlatedValues = emotion.sensations.filter(v => selections.sensationValues.includes(v));
-      // const correlatedLabels = correlatedValues.map(v => valueToLabel[v] || v);
+      const allLabels = currentEmotionData.sensations.map(v => valueToLabel[v] || v);
       const p = document.createElement('p');
-      p.textContent = "Often sensed as: " + allLabels.join(', ') +
-                      // (correlatedLabels.length ? ". Correlated with your selections: " + correlatedLabels.join(', ') : "");
-                      "";
+      p.textContent = "Often sensed as: " + allLabels.join(', ') + ".";
       emotionContainer.appendChild(p);
 
-      //might need to modify with new data format (emotion.key)
+      // Do I want to do anything with this?
+      // const correlatedValues = currentEmotionData.sensations.filter(v => selections.sensationValues.includes(v));
+      // const correlatedLabels = correlatedValues.map(v => valueToLabel[v] || v);
+
+      // What is this for?
       if (!Array.isArray(selections.nuanced[emotion.key])) selections.nuanced[emotion.key] = [];
       if (!Array.isArray(selections.needs[emotion.key])) selections.needs[emotion.key] = [];
 
@@ -197,8 +198,7 @@
       nuanceLegend.textContent = "Specifically...";
       emotionContainer.appendChild(nuanceLegend);
 
-      //might need to modify
-      emotion.nuanced.forEach(n => {
+      currentEmotionData.nuancedEmotions.forEach(n => {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.dataset.type = 'nuanced';
@@ -215,9 +215,9 @@
 
       //can probably make a function for all these checkboxes instead of doing the same thing 3 times
       const needsLegend = document.createElement('h4');
-      needsLegend.textContent = "I need...";
+      needsLegend.textContent = "I need " + currentEmotionData.coreNeed + ":";
       emotionContainer.appendChild(needsLegend);
-      emotion.needs.forEach(n => {
+      currentEmotionData.nuancedNeeds.forEach(n => {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.dataset.type = 'need';
@@ -232,19 +232,19 @@
         emotionContainer.appendChild(document.createElement('br'));
       });
 
-      nextEmotionBtn.textContent = currentEmotionIndex < matchedEmotions.length - 1 ? 'Next Emotion' : 'See Summary';
+      nextEmotionBtn.textContent = currentEmotionIndex < selections.emotions.length - 1 ? 'Next Emotion' : 'See Summary';
       setTimeout(()=> h2.focus(), 0);
     }
 
     function saveCurrentSelections() {
-      const emotion = matchedEmotions[currentEmotionIndex];
+      const emotion = selections.emotions[currentEmotionIndex];
       selections.nuanced[emotion.key] = Array.from(document.querySelectorAll(`input[data-type="nuanced"][data-emotion="${emotion.key}"]:checked`)).map(cb=>cb.value);
       selections.needs[emotion.key] = Array.from(document.querySelectorAll(`input[data-type="need"][data-emotion="${emotion.key}"]:checked`)).map(cb=>cb.value);
     }
 
     nextEmotionBtn.addEventListener('click', () => {
       saveCurrentSelections();
-      if (currentEmotionIndex < matchedEmotions.length - 1) {
+      if (currentEmotionIndex < selections.emotions.length - 1) {
         currentEmotionIndex++;
         renderEmotion();
       } else {
@@ -267,6 +267,7 @@
     });
 
     function renderSummary(){
+      console.log(selections)
       saveCurrentSelections(); // save last emotion selections
       summaryContainer.innerHTML = ''; // clear previous
 
@@ -278,12 +279,13 @@
 
       //everthing below here needs to be reworked
       const pNotice = document.createElement('p');
-      pNotice.textContent = `I notice: ${selections.emotions.join(', ') || 'nothing selected'}.`;
+      pNotice.textContent = `I notice: ${selections.sensationText.join(', ') || 'nothing selected'}.`;
       summaryContainer.appendChild(pNotice);
 
       const selectedNuanced = Object.entries(selections.nuanced).filter(([,arr])=>arr.length).map(([k,arr]) => ({k,arr}));
       const selectedNeeds = Object.entries(selections.needs).filter(([,arr])=>arr.length).map(([k,arr]) => ({k,arr}));
 
+      console.log(selections);
       if (selectedNuanced.length) {
         const ul = document.createElement('ul');
         selectedNuanced.forEach(({k,arr})=>{
@@ -306,7 +308,7 @@
         summaryContainer.appendChild(ul);
       }
 
-      const matchedLabels = matchedEmotions.map(e=>e.label);
+      const matchedLabels = matchedEmotionsArr.map(e=>e.label);
       if (matchedLabels.length) {
         const pEmotions = document.createElement('p');
         pEmotions.textContent = `Core emotions suggested by your sensations: ${matchedLabels.join(', ')}.`;
