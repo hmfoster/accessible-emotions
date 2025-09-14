@@ -45,10 +45,30 @@
 
   <script>
     let dataset = {};
+    let newDataset = {};
+    // {bodyPart: {sensation: emotion, sensation: emotion}}
+    let allSensations = {};
 
     async function loadDataset() {
       const response = await fetch('dataset.json');
       dataset = await response.json();
+
+      const newResponse = await fetch('datasetNew.json');
+      newDataset = await newResponse.json();
+
+      //invert data object to sensation : emotion
+      let sensations, sensation;
+      for (const emotion in newDataset){
+        sensations = newDataset[emotion].sensations;
+        for (const bodyPart in sensations){
+          if (allSensations[bodyPart] === undefined) {
+            allSensations[bodyPart] = {};
+          }
+          sensations[bodyPart].forEach(sensation => {
+            allSensations[bodyPart][sensation] = emotion;
+          });
+        }
+      }
       generateSensations();
     }
 
@@ -70,9 +90,6 @@
       needs: {}
     };
 
-    // create functions to use data object better
-    // one to combine all sensations under each part of the body
-    // one to combine all sensations for a given emotion into one array
 
     function generateSensations() {
       sensationsContainer.innerHTML = '';
@@ -81,13 +98,12 @@
       h2.tabIndex = -1;
       sensationsContainer.appendChild(h2);
 
-      // Need to edit this to  match the new data model
-      Object.entries(dataset.sensations).forEach(([part, arr]) => {
+      for (part in allSensations){
         const h3 = document.createElement('h3');
         h3.textContent = part.charAt(0).toUpperCase() + part.slice(1);
         sensationsContainer.appendChild(h3);
 
-        arr.forEach(sensation => {
+        Object.keys(allSensations[part]).forEach(sensation => {
           const label = document.createElement('label');
           const input = document.createElement('input');
           input.type = 'checkbox';
@@ -97,7 +113,8 @@
           sensationsContainer.appendChild(label);
           sensationsContainer.appendChild(document.createElement('br'));
         });
-      });
+
+      }
     }
 
     function buildValueToLabelMap(){

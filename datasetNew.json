@@ -11,13 +11,13 @@
   },
   "Fear": {
       "sensations": {
-      "head": [],
-      "torso":[],
-      "limbs":[]
+      "head": ["wide-eyes-or-pupils","quick mind","sensitivity-to-sound-or-light"],
+      "torso":["pounding-heart","shallow-breath","tight-chest","butterflies","sensitivity-to-touch"],
+      "limbs":["cold-hands","cold-feet","fidgety-hands-and-feet"]
     },
-    "nuanced-emotions":[],
-    "core-need": "",
-    "nuanced-needs": ["something else"]
+    "nuanced-emotions":["worried","nervous","busy","overwhelmed","stressed","imposter-syndrome","fixated","anxious","intimidated","insecure","panic","terrified","something-else"],
+    "core-need": "a greater sense of safety",
+    "nuanced-needs": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
   },
   "Sadness": {
       "sensations": {
