@@ -89,16 +89,22 @@
       generateSensations();
     }
 
+    function createElement(type, content, srFocus){
+      const header = document.createElement(type);
+      header.textContent = content;
+      if (srFocus) header.tabIndex = -1;
+      return header;
+    }
+
     function generateSensations() {
-      const h2 = document.createElement('h2');
-      h2.textContent = "I notice...";
-      h2.tabIndex = -1;
-      sensationsContainer.appendChild(h2);
+      sensationsContainer.appendChild(createElement("h2", "I notice...", true));
 
       for (part in partSensations){
-        const h3 = document.createElement('h3');
-        h3.textContent = part.charAt(0).toUpperCase() + part.slice(1);
-        sensationsContainer.appendChild(h3);
+        sensationsContainer.appendChild(
+          createElement("h3",
+            part.charAt(0).toUpperCase() + part.slice(1),
+            false)
+          );
 
         partSensations[part].forEach(sensation => {
           const label = document.createElement('label');
@@ -106,14 +112,13 @@
           input.type = 'checkbox';
           input.value = sensation;
           label.appendChild(input);
-          label.appendChild(document.createTextNode(' ' + sensation.replace(/-/g, ' ')));
+          label.appendChild(document.createTextNode(
+            ' ' + sensation.replace(/-/g, ' ')));
           sensationsContainer.appendChild(label);
           sensationsContainer.appendChild(document.createElement('br'));
         });
-
       }
     }
-
 
     step1Btn.addEventListener('click', () => {
       const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
@@ -142,36 +147,22 @@
     });
 
     function renderEmotion(){
+      emotionContainer.innerHTML = '';
+
       const emotion = selections.emotions[currentEmotionIndex];
       const currentEmotionData = emotionData[emotion];
 
+      const h2 = emotionContainer.appendChild(createElement("h2",emotion,true));
 
-      const h2 = document.createElement('h2');
-      h2.textContent = emotion;
-      h2.tabIndex = -1;
-      emotionContainer.appendChild(h2);
-
-      const sensedP = document.createElement('p');
       const sensedLabels = [...selections.sensationText].filter(sensation => sensationEmotions[sensation.replace(/\s/g, '-')] === emotion);
-      sensedP.textContent = `You noticed ${sensedLabels.join(', ')}.`;
-      emotionContainer.appendChild(sensedP);
-
-      const p = document.createElement('p');
+      emotionContainer.appendChild(createElement("p",`You noticed ${sensedLabels.join(', ')}.`));
 
       const sensationValuesSet = new Set(selections.sensationValues);
       const excludedLabels = currentEmotionData.sensations.filter(sensation => !sensationValuesSet.has(sensation)).map(sensationValue => sensationValue.replace(/-/g, ' '));
+      emotionContainer.appendChild(createElement("p",`Other sensations of ${emotion} can include ${excludedLabels.join(', ')}.`));
 
-      p.textContent = `Other sensations of ${emotion} can include ${excludedLabels.join(', ')}.`;
-      emotionContainer.appendChild(p);
-
-      const h3 = document.createElement('h3');
-      h3.textContent = "I feel...";
-      emotionContainer.appendChild(h3);
-
-      // What is this for?
+      emotionContainer.appendChild(createElement('h3', 'I feel...'));
       if (!Array.isArray(selections.nuanced[emotion])) selections.nuanced[emotion] = [];
-      if (!Array.isArray(selections.needs[emotion])) selections.needs[emotion] = [];
-
       currentEmotionData.nuancedEmotions.forEach(n => {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -187,10 +178,11 @@
         emotionContainer.appendChild(document.createElement('br'));
       });
 
+      emotionContainer.appendChild(document.createElement('br'));
+
       //can probably make a function for all these checkboxes instead of doing the same thing 3 times
-      const needsLegend = document.createElement('h3');
-      needsLegend.textContent = "I need " + currentEmotionData.coreNeed + ":";
-      emotionContainer.appendChild(needsLegend);
+      emotionContainer.appendChild(createElement('h3', `I need ${currentEmotionData.coreNeed}...`));
+      if (!Array.isArray(selections.needs[emotion])) selections.needs[emotion] = [];
       currentEmotionData.nuancedNeeds.forEach(n => {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -205,14 +197,6 @@
         emotionContainer.appendChild(lbl);
         emotionContainer.appendChild(document.createElement('br'));
       });
-
-            //This might not be necessary
-      const live = document.createElement('div');
-      live.className = 'sr-only';
-      live.setAttribute('aria-live','assertive');
-      //to modify
-      live.textContent = `Now showing ${emotion}`;
-      emotionContainer.appendChild(live);
 
       nextEmotionBtn.textContent = currentEmotionIndex < selections.emotions.length - 1 ? 'Next Emotion' : 'See Summary';
       setTimeout(()=> h2.focus(), 0);
@@ -253,23 +237,13 @@
       // NEXT: rearrange this so that "Overall" is the same styling as "Core Emotion" on previous page (and is a form)
       // Underneath, summarized version of each core emotion that parallels the previous page
       // as each thing tried is checked off, add checklist underneath of just tried, and give a rating of how helpful each was
+
       saveCurrentSelections(); // save last emotion selections
       summaryContainer.innerHTML = ''; // clear previous
 
-      const heading = document.createElement('h2');
-      heading.id = 'summaryHeading';
-      heading.tabIndex = -1;
-      heading.textContent = "Overall";
-      summaryContainer.appendChild(heading);
+      const h2 = summaryContainer.appendChild(createElement('h2','Overall',true));
 
       const selectedNuanced = new Map(Object.entries(selections.nuanced));
-
-      const needsArr = Object.entries(selections.needs);
-      let numNeeds = needsArr.reduce ((sum, [emotion, needArr]) => {
-        return sum + needArr.length;
-      },0);
-      const selectedNeeds = new Map(needsArr);
-
       if (selectedNuanced.size) {
         const ul = document.createElement('ul');
         selectedNuanced.forEach((feelings, emotion)=>{
@@ -277,14 +251,17 @@
           li.innerHTML = `<strong>${emotion}</strong> - ${feelings.join(', ')}`;
           ul.appendChild(li);
         });
-        summaryContainer.appendChild(document.createElement('h3')).textContent =  `I notice ${[...selections.sensationText].join(', ') || 'nothing selected'}.`;
-
+        summaryContainer.appendChild(createElement('h3', `I notice ${[...selections.sensationText].join(', ')}`));
         summaryContainer.appendChild(ul);
       }
 
-      summaryContainer.appendChild(
-         document.createElement('h3')
-      ).textContent = (numNeeds > 0) ? 'I need (select the ones you try)' : `No needs selected.`;
+      const needsArr = Object.entries(selections.needs);
+      let numNeeds = needsArr.reduce ((sum, [emotion, needArr]) => {
+        return sum + needArr.length;
+      },0);
+      summaryContainer.appendChild(createElement('h3', (numNeeds > 0) ? 'I need (select the ones you try)' : `No needs selected.`))
+
+      const selectedNeeds = new Map(needsArr);
       if (numNeeds > 0) {
         // const ul = document.createElement('ul');
         selectedNeeds.forEach(needs => {
@@ -300,16 +277,11 @@
             lbl.appendChild(document.createTextNode(' ' + need));
             summaryContainer.appendChild(lbl);
             summaryContainer.appendChild(document.createElement('br'));
-
           });
         });
-
       }
 
-      // Add Back button
-      const backBtn = document.createElement('button');
-      backBtn.type = 'button';
-      backBtn.textContent = 'Back';
+      const backBtn = createElement('button','Back')
       backBtn.addEventListener('click', () => {
         summaryContainer.classList.add('hidden');
         step2.classList.remove('hidden');
@@ -317,7 +289,7 @@
       });
       summaryContainer.appendChild(backBtn);
 
-      setTimeout(()=> heading.focus(), 0);
+      setTimeout(()=> h2.focus(), 0);
       summaryContainer.classList.remove('hidden');
     }
 
