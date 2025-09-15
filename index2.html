@@ -128,10 +128,12 @@
 
     step1Btn.addEventListener('click', () => {
       const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
+
       //array of things like "clenched-jaw"
       selections.sensationValues = checked.map(cb => cb.value);
+
       //array of same sensations, but without the dash ("clenched jaw")
-      selections.sensationText = checked.map(cb => cb.parentElement.textContent.trim());
+      selections.sensationText = new Set(checked.map(cb => cb.parentElement.textContent.trim()));
 
       let matchedEmotions = new Set();
       selections.sensationValues.forEach(sensation => {
@@ -156,21 +158,34 @@
     });
 
     function renderEmotion(){
-      // need to modify for new data format
       const emotion = selections.emotions[currentEmotionIndex];
       const currentEmotionData = emotionData[emotion];
 
-      // ex: {furrowed-brow: "furrowed brow"} not sure why... seems maybe overcomplicated?
       const valueToLabel = buildValueToLabelMap();
       emotionContainer.innerHTML = '';
 
       const h2 = document.createElement('h2');
-      h2.textContent = "I feel...";
-      h2.tabIndex = -1;
+      h2.textContent = emotion;
       emotionContainer.appendChild(h2);
 
+      const allLabels = currentEmotionData.sensations.map(v => valueToLabel[v] || v);
+
+      const sensedP = document.createElement('p');
+      const sensedLabels = [...selections.sensationText];
+      console.log(sensedLabels)
+      sensedP.textContent = `You noticed ${sensedLabels.join(', ')}.`;
+      emotionContainer.appendChild(sensedP);
+
+      const p = document.createElement('p');
+      const excludedLabels = allLabels.map(label =>selections.sensationText.has(label) ? "" : label
+        ).filter(label => label !== "");
+
+      p.textContent = `Other sensations of ${emotion} can include ${excludedLabels.join(', ')}.`;
+      emotionContainer.appendChild(p);
+
       const h3 = document.createElement('h3');
-      h3.textContent = emotion;
+      h3.textContent = "I feel...";
+      h3.tabIndex = -1;
       emotionContainer.appendChild(h3);
 
       const live = document.createElement('div');
@@ -180,24 +195,11 @@
       live.textContent = `Now showing ${emotion}`;
       emotionContainer.appendChild(live);
 
-      const allLabels = currentEmotionData.sensations.map(v => valueToLabel[v] || v);
-      const p = document.createElement('p');
-      p.textContent = "Often sensed as: " + allLabels.join(', ') + ".";
-      emotionContainer.appendChild(p);
-
-      // Do I want to do anything with this?
-      // const correlatedValues = currentEmotionData.sensations.filter(v => selections.sensationValues.includes(v));
-      // const correlatedLabels = correlatedValues.map(v => valueToLabel[v] || v);
 
       // What is this for?
       if (!Array.isArray(selections.nuanced[emotion])) selections.nuanced[emotion] = [];
       if (!Array.isArray(selections.needs[emotion])) selections.needs[emotion] = [];
 
-      const nuanceLegend = document.createElement('h4');
-      nuanceLegend.textContent = "Specifically...";
-      emotionContainer.appendChild(nuanceLegend);
-
-      // Hmmmm I think I need to change how these are getting added to the selections object. Doesn't seem to be working correctly
       currentEmotionData.nuancedEmotions.forEach(n => {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
@@ -270,47 +272,59 @@
       saveCurrentSelections(); // save last emotion selections
       summaryContainer.innerHTML = ''; // clear previous
 
+      const needs = Object.entries(selections.needs);
+
+      let numNeeds = needs.reduce ((sum, [emotion, needArr]) => {
+        return sum + needArr.length;
+      },0);
+
       const heading = document.createElement('h2');
       heading.id = 'summaryHeading';
       heading.tabIndex = -1;
-      heading.textContent = 'My current emotions are...';
+      heading.textContent = "Overall";
       summaryContainer.appendChild(heading);
 
       //everthing below here needs to be reworked
-      const pNotice = document.createElement('p');
-      pNotice.textContent = `I notice: ${selections.sensationText.join(', ') || 'nothing selected'}.`;
-      summaryContainer.appendChild(pNotice);
 
-      //what is this for?
-      const selectedNuanced = Object.entries(selections.nuanced).filter(([,arr])=>arr.length).map(([k,arr]) => ({k,arr}));
-      const selectedNeeds = Object.entries(selections.needs).filter(([,arr])=>arr.length).map(([k,arr]) => ({k,arr}));
+      const selectedNuanced = new Map(Object.entries(selections.nuanced));
 
-      if (selectedNuanced.length) {
+      const selectedNeeds = new Map(Object.entries(selections.needs));
+
+      if (selectedNuanced.size) {
         const ul = document.createElement('ul');
-        selectedNuanced.forEach(({k,arr})=>{
+        selectedNuanced.forEach((feelings, emotion)=>{
           const li = document.createElement('li');
-          li.innerHTML = `<strong>${k}:</strong> ${arr.join(', ')}`;
+          li.innerHTML = `<strong>${emotion}</strong> - ${feelings.join(', ')}`;
           ul.appendChild(li);
         });
-        summaryContainer.appendChild(document.createElement('h3')).textContent = 'Specifically, by emotion:';
+        summaryContainer.appendChild(document.createElement('h3')).textContent =  `I notice ${[...selections.sensationText].join(', ') || 'nothing selected'}.`;
+
         summaryContainer.appendChild(ul);
       }
 
-      if (selectedNeeds.length) {
-        const ul = document.createElement('ul');
-        selectedNeeds.forEach(({k,arr})=>{
-          const li = document.createElement('li');
-          li.innerHTML = `<strong>${k}:</strong> ${arr.join(', ')}`;
-          ul.appendChild(li);
+      summaryContainer.appendChild(
+         document.createElement('h3')
+      ).textContent = (numNeeds > 0) ? 'I need (select the ones you try)' : `No needs selected.`;
+      if (numNeeds > 0) {
+        // const ul = document.createElement('ul');
+        selectedNeeds.forEach(needs => {
+          needs.forEach(need => {
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.dataset.type = 'tried';
+            // cb.dataset.emotion = emotion;
+            cb.value = need;
+
+            const lbl = document.createElement('label');
+            lbl.appendChild(cb);
+            lbl.appendChild(document.createTextNode(' ' + need));
+            summaryContainer.appendChild(lbl);
+            summaryContainer.appendChild(document.createElement('br'));
+
+          });
         });
-        summaryContainer.appendChild(document.createElement('h3')).textContent = 'Identified needs (by emotion):';
-        summaryContainer.appendChild(ul);
+
       }
-
-        const pEmotions = document.createElement('p');
-        pEmotions.textContent = `Core emotions suggested by your sensations: ${selections.emotions.join(', ')}.`;
-        summaryContainer.appendChild(pEmotions);
-
 
       // Add Back button
       const backBtn = document.createElement('button');
