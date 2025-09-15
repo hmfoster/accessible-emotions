@@ -65,4 +65,3 @@ Which often is embodied as quick mind, tight chest, shallow breath, fidgety hand
 - I notice a furrowed brow, hot face, quick mind, tight chest, (etc.), suggesting the core emotions of anger and fear.
 - Specifically, I feel annoyed and stressed.
 - I need to be heard / noticed, to take a breath or change my breathing, and/or to ground in the present.
-
