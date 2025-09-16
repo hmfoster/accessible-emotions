@@ -7,7 +7,7 @@
     },
     "nuancedEmotions":["tense","annoyed","frustrated","skeptical","loyal","protective","resistant","defensive","resentful","activated","hateful","rage","something else"],
     "coreNeed": "something to move or change",
-    "nuancedNeeds": ["more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","a snack/more glucose","something else"]
+    "nuancedNeeds": ["to get more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","to get a snack/more glucose","something else"]
   },
   "Fear": {
       "sensations": {

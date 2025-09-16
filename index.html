@@ -39,7 +39,10 @@
       </fieldset>
 
       <!-- Summary -->
-      <div id="summary" class="summary hidden" role="region" aria-label="Summary" aria-live="polite"></div>
+      <fieldset id="step3" class="hidden" aria-live="polite">
+        <legend>Summary</legend>
+        <div id="summaryContainer" role="region" aria-label="Summary"></div>
+      </fieldset>
     </form>
   </main>
 
@@ -58,14 +61,17 @@
     };
 
     // html elements
-    const sensationsContainer = document.getElementById('sensationsContainer');
     const step1 = document.getElementById('step1');
+    const sensationsContainer = document.getElementById('sensationsContainer');
     const step1Btn = document.getElementById('step1Btn');
+
     const step2 = document.getElementById('step2');
     const emotionContainer = document.getElementById('emotionContainer');
     const nextEmotionBtn = document.getElementById('nextEmotionBtn');
     const prevEmotionBtn = document.getElementById('prevEmotionBtn');
-    const summaryContainer = document.getElementById('summary');
+
+    const step3 = document.getElementById('step3');
+    const summaryContainer = document.getElementById('summaryContainer');
 
 
     async function loadDataset() {
@@ -179,7 +185,7 @@
 
       emotionContainer.appendChild(document.createElement('br'));
 
-      emotionContainer.appendChild(createTextElement('h3', `I need ${currentEmotionData.coreNeed}...`));
+      emotionContainer.appendChild(createTextElement('h3', `I need ${currentEmotionData.coreNeed} and will try...`));
       if (!Array.isArray(selections.needs[emotion])) selections.needs[emotion] = [];
       currentEmotionData.nuancedNeeds.forEach(nuNeed => {
         const cb = createCheckbox(nuNeed, nuNeed, emotionContainer);
@@ -205,6 +211,7 @@
         renderEmotion();
       } else {
         step2.classList.add('hidden');
+        step3.classList.remove('hidden');
         renderSummary();
       }
     });
@@ -223,63 +230,39 @@
     });
 
     function renderSummary(){
-
-      // NEXT: rearrange this so that "Overall" is the same styling as "Core Emotion" on previous page (and is a form)
-      // Underneath, summarized version of each core emotion that parallels the previous page
-      // as each thing tried is checked off, add checklist underneath of just tried, and give a rating of how helpful each was
-
       saveCurrentSelections(); // save last emotion selections
       summaryContainer.innerHTML = ''; // clear previous
 
-      const h2 = summaryContainer.appendChild(createTextElement('h2','Overall',true));
+      selections.emotions.forEach(emotion => {
+        summaryContainer.appendChild(createTextElement('h3',`Core Emotion: ${emotion}`,true));
 
-      const selectedNuanced = new Map(Object.entries(selections.nuanced));
-      if (selectedNuanced.size) {
-        const ul = document.createElement('ul');
-        selectedNuanced.forEach((feelings, emotion)=>{
-          const li = document.createElement('li');
-          li.innerHTML = `<strong>${emotion}</strong> - ${feelings.join(', ')}`;
-          ul.appendChild(li);
-        });
-        summaryContainer.appendChild(createTextElement('h3', `I notice ${[...selections.sensationText].join(', ')}`));
-        summaryContainer.appendChild(ul);
-      }
+        const sensedLabels = [...selections.sensationText].filter(sensation => sensationEmotions[sensation.replace(/\s/g, '-')] === emotion);
+        summaryContainer.appendChild(createTextElement('h4',`I notice ${sensedLabels.join(', ')}`));
 
-      const needsArr = Object.entries(selections.needs);
-      let numNeeds = needsArr.reduce ((sum, [emotion, needArr]) => {
-        return sum + needArr.length;
-      },0);
-      summaryContainer.appendChild(createTextElement('h3', (numNeeds > 0) ? 'I need (select the ones you try)' : `No needs selected.`))
+        summaryContainer.appendChild(createTextElement('h4',`I feel ${selections.nuanced[emotion].join(', ')}`));
 
-      const selectedNeeds = new Map(needsArr);
-      if (numNeeds > 0) {
-        // const ul = document.createElement('ul');
-        selectedNeeds.forEach(needs => {
-          needs.forEach(need => {
-            const cb = document.createElement('input');
-            cb.type = 'checkbox';
-            cb.dataset.type = 'tried';
-            // cb.dataset.emotion = emotion;
-            cb.value = need;
-
-            const lbl = document.createElement('label');
-            lbl.appendChild(cb);
-            lbl.appendChild(document.createTextNode(' ' + need));
-            summaryContainer.appendChild(lbl);
-            summaryContainer.appendChild(document.createElement('br'));
+        summaryContainer.appendChild(createTextElement('h4',`I need ${emotionData[emotion].coreNeed}`));
+        const selectedNeeds = selections.needs[emotion];
+        if (selectedNeeds.length > 0) {
+          selectedNeeds.forEach(need => {
+            createCheckbox(need, need, summaryContainer)
           });
-        });
-      }
+        } else {
+          summaryContainer.appendChild(createTextElement('p', "No needs selected."));
+        }
+
+        summaryContainer.appendChild(document.createElement('br'));
+      });
 
       const backBtn = createTextElement('button','Back')
       backBtn.addEventListener('click', () => {
-        summaryContainer.classList.add('hidden');
+        step3.classList.add('hidden');
         step2.classList.remove('hidden');
         renderEmotion();
       });
       summaryContainer.appendChild(backBtn);
 
-      setTimeout(()=> h2.focus(), 0);
+      // setTimeout(()=> h2.focus(), 0);
       summaryContainer.classList.remove('hidden');
     }
 
