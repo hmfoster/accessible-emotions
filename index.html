@@ -60,6 +60,7 @@
         <legend>Summary</legend>
         <div id="summaryContainer" role="region" aria-label="Summary"></div>
         <button type="button" id="step3BackBtn" aria-controls="summaryContainer">Back</button>
+        <button id="copyBtn">Copy Summary</button>
       </fieldset>
     </form>
   </main>
@@ -78,6 +79,7 @@
     /* IDEAS FROM NICK
       - Make text in selected items change-- stray clicks might not obvious to someone with low vision
       - Button to copy summary page?
+      - Input to enter text for "something else"?
     */
     const step1 = document.getElementById('step1');
     const sensationsContainer = document.getElementById('sensationsContainer');
@@ -92,6 +94,7 @@
     const step3 = document.getElementById('step3');
     const summaryContainer = document.getElementById('summaryContainer');
     const step3BackBtn = document.getElementById('step3BackBtn');
+    const copySummaryBtn = document.getElementById('copyBtn');
 
 
     async function loadDataset() {
@@ -323,7 +326,16 @@
         } else {
           step2.classList.remove('hidden');
         }
-    })
+    });
+
+    copySummaryBtn.addEventListener("click", () => {
+      const summaryText = document.getElementById("summaryContainer").innerText;
+      navigator.clipboard.writeText(summaryText).then(() => {
+        console.log("Summary copied to clipboard!");
+      }).catch(err => {
+        console.error("Failed to copy text: ", err);
+      });
+});
 
     loadDataset();
   </script>
