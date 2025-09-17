@@ -28,8 +28,10 @@
     .checkbox-group input[type="checkbox"] {
       margin-right: 0.5rem; /* Adjust spacing as needed */
     }
-
-
+    .horizontal-line {
+      border-top: 1px solid black; /* Creates a 1px solid black line at the top */
+      margin: 10px 0; /* Adds some space above and below the line */
+    }
   </style>
 </head>
 <body>
@@ -40,6 +42,7 @@
       <!-- Step 1 -->
       <fieldset id="step1">
         <legend>Sensations</legend>
+        <button type="button" id="skipSensationsBtn">Skip and explore all emotions</button>
         <div id="sensationsContainer" role="region" area-label="Current sensations"></div>
         <button type="button" id="step1Btn">Next</button>
       </fieldset>
@@ -52,7 +55,7 @@
         <button type="button" id="nextEmotionBtn" aria-controls="emotionContainer">Next Emotion</button>
       </fieldset>
 
-      <!-- Summary -->
+      <!-- Step 3 -->
       <fieldset id="step3" class="hidden" aria-live="polite">
         <legend>Summary</legend>
         <div id="summaryContainer" role="region" aria-label="Summary"></div>
@@ -62,7 +65,6 @@
   </main>
 
   <script>
-    // Data values
     let emotionData = {};
     let partSensations = {};
     let sensationEmotions = {};
@@ -73,10 +75,13 @@
       nuanced: {},
       needs: {}
     };
-
-    // html elements
+    /* IDEAS FROM NICK
+      - Make text in selected items change-- stray clicks might not obvious to someone with low vision
+      - Button to copy summary page?
+    */
     const step1 = document.getElementById('step1');
     const sensationsContainer = document.getElementById('sensationsContainer');
+    const skipSensationsBtn = document.getElementById('skipSensationsBtn');
     const step1Btn = document.getElementById('step1Btn');
 
     const step2 = document.getElementById('step2');
@@ -86,6 +91,7 @@
 
     const step3 = document.getElementById('step3');
     const summaryContainer = document.getElementById('summaryContainer');
+    const step3BackBtn = document.getElementById('step3BackBtn');
 
 
     async function loadDataset() {
@@ -136,10 +142,7 @@
 
       for (part in partSensations){
         sensationsContainer.appendChild(
-          createTextElement("h3",
-            part.charAt(0).toUpperCase() + part.slice(1),
-            false)
-          );
+          createTextElement("h3", part.charAt(0).toUpperCase() + part.slice(1), false));
         const groupDiv = document.createElement('div');
         groupDiv.className = 'checkbox-group';
         sensationsContainer.appendChild(groupDiv);
@@ -149,6 +152,15 @@
         });
       }
     }
+
+    skipSensationsBtn.addEventListener('click', () => {
+      selections.emotions = Object.keys(emotionData);
+      currentEmotionIndex = 0;
+      step1.classList.add('hidden');
+      step2.classList.remove('hidden');
+      nextEmotionBtn.classList.remove('hidden');
+      renderEmotion();
+    });
 
     step1Btn.addEventListener('click', () => {
       const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
@@ -160,17 +172,12 @@
       step1.classList.add('hidden');
       step2.classList.remove('hidden');
       if (matchedEmotions.size === 0) {
-        // step2.classList.remove('hidden');
         nextEmotionBtn.classList.add('hidden');
         emotionContainer.innerHTML = `<h2 id="error">You did not select any sensations.</h2>`;
         document.getElementById('error').focus();
         return;
-      } else {
-        nextEmotionBtn.classList.remove('hidden');
       }
-
-
-
+      nextEmotionBtn.classList.remove('hidden');
       selections.emotions = [...matchedEmotions];
       currentEmotionIndex = 0;
       renderEmotion();
@@ -184,12 +191,16 @@
 
       const h2 = emotionContainer.appendChild(createTextElement("h2",emotion,true));
 
-      const sensedLabels = [...selections.sensations].filter(sensation => sensationEmotions[sensation] === emotion);
-      emotionContainer.appendChild(createTextElement("p",`You noticed ${sensedLabels.join(', ')}.`));
+      if (selections.sensations.length > 0){
+        const sensedLabels = [...selections.sensations].filter(sensation => sensationEmotions[sensation] === emotion);
+        emotionContainer.appendChild(createTextElement("p",`You noticed ${sensedLabels.join(', ')}.`));
 
-      const sensationValuesSet = new Set(selections.sensations);
-      const excludedLabels = currentEmotionData.sensations.filter(sensation => !sensationValuesSet.has(sensation));
-      emotionContainer.appendChild(createTextElement("p",`Other sensations of ${emotion} can include ${excludedLabels.join(', ')}.`));
+        const sensationValuesSet = new Set(selections.sensations);
+        const excludedLabels = currentEmotionData.sensations.filter(sensation => !sensationValuesSet.has(sensation));
+        emotionContainer.appendChild(createTextElement("p",`Other sensations of ${emotion} can include ${excludedLabels.join(', ')}.`));
+      } else {
+         emotionContainer.appendChild(createTextElement("p",`Sensations of ${emotion} can include ${currentEmotionData.sensations.join(', ')}.`));
+      }
 
       emotionContainer.appendChild(createTextElement('h3', 'I feel...'));
       if (!Array.isArray(selections.nuanced[emotion])) selections.nuanced[emotion] = [];
@@ -254,33 +265,54 @@
       saveCurrentSelections(); // save last emotion selections
       summaryContainer.innerHTML = ''; // clear previous
 
+      const selectedSensations = selections.sensations;
+      const selectedNuanced = selections.nuanced;
+      const selectedNeeds = selections.needs;
+
+      if (!(selectedSensations.length || Object.values(selectedNuanced).flat().length || Object.values(selectedNeeds).flat().length)){
+        summaryContainer.innerHTML = `<h2 id="error">You did not select anything. Go back to previous emotion/s or refresh page to start over.</h2>`;
+      }
+
       selections.emotions.forEach(emotion => {
+        const emotionSensations = [...selectedSensations].filter(sensation => sensationEmotions[sensation] === emotion);
+        const nuancedEmotions = selectedNuanced[emotion];
+        const emotionNeeds = selectedNeeds[emotion];
+
+        if (!(emotionNeeds.length || nuancedEmotions.length)) {
+          return;
+        }
+
         summaryContainer.appendChild(createTextElement('h3',`Core Emotion: ${emotion}`,true));
 
-        const sensedLabels = [...selections.sensations].filter(sensation => sensationEmotions[sensation] === emotion);
-        summaryContainer.appendChild(createTextElement('h4',`I notice ${sensedLabels.join(', ')}`));
+        let sensationText;
+        if (emotionSensations.length > 0){
+          sensationText = createTextElement('h4',`I notice ${emotionSensations.join(', ')}`);
+        } else {
+          sensationText = createTextElement('p',`Sensations of ${emotion} can include ${emotionData[emotion].sensations.join(', ')}.`);
+        }
+        summaryContainer.appendChild(sensationText);
 
-        const nuancedEmotions = selections.nuanced[emotion];
         let nuacedText;
         if (nuancedEmotions.length > 0){
-          nuacedText = `I feel ${nuancedEmotions.join(', ')}`;
+          nuacedText = `Specifically, I feel ${nuancedEmotions.join(', ')}`;
         } else {
-          nuacedText = 'No nuanced feelings selected';
+          nuacedText = 'No specific feelings selected';
         }
         summaryContainer.appendChild(createTextElement('h4',nuacedText));
 
         summaryContainer.appendChild(createTextElement('h4',`I need ${emotionData[emotion].coreNeed}`));
 
-        const selectedNeeds = selections.needs[emotion];
-        if (selectedNeeds.length > 0) {
-          selectedNeeds.forEach(need => {
+        if (emotionNeeds.length > 0) {
+          emotionNeeds.forEach(need => {
             createCheckbox(need, summaryContainer, true)
           });
         } else {
-          createCheckbox('No needs selected.',summaryContainer);
+          createCheckbox('No specific needs selected.',summaryContainer);
           summaryContainer.appendChild(document.createElement('br'));
         }
         summaryContainer.appendChild(document.createElement('br'));
+        const line = summaryContainer.appendChild(document.createElement('div'));
+        line.classList.add('horizontal-line');
       });
     }
 

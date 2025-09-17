@@ -45,7 +45,7 @@
       "torso":[],
       "limbs":[]
     },
-    "nuancedNmotions":[],
+    "nuancedEmotions":[],
     "coreNeed": "",
     "nuancedNeeds": ["something else"]
   },
