@@ -54,8 +54,7 @@
     let sensationEmotions = {};
     let currentEmotionIndex = 0;
     const selections = {
-      sensationValues: [],
-      sensationText: [],
+      sensations: [],
       emotions: [],
       nuanced: {},
       needs: {}
@@ -129,7 +128,7 @@
           );
 
         partSensations[part].forEach(sensation => {
-          createCheckbox(sensation, sensation.replace(/-/g, ' '), sensationsContainer);
+          createCheckbox(sensation, sensation, sensationsContainer);
         });
       }
     }
@@ -138,11 +137,11 @@
       const checked = Array.from(document.querySelectorAll('#step1 input[type="checkbox"]:checked'));
 
       //array of things like "clenched-jaw"
-      selections.sensationValues = checked.map(cb => cb.value);
+      selections.sensations = checked.map(cb => cb.value);
       //array of same sensations, but without the dash ("clenched jaw")
-      selections.sensationText = new Set(checked.map(cb => cb.parentElement.textContent.trim()));
+      // selections.sensationText = new Set(checked.map(cb => cb.parentElement.textContent.trim()));
 
-      let matchedEmotions = new Set(selections.sensationValues.map(sensation => sensationEmotions[sensation]));
+      let matchedEmotions = new Set(selections.sensations.map(sensation => sensationEmotions[sensation]));
       step1.classList.add('hidden');
       if (matchedEmotions.size === 0) {
         step3.classList.remove('hidden');
@@ -167,11 +166,11 @@
 
       const h2 = emotionContainer.appendChild(createTextElement("h2",emotion,true));
 
-      const sensedLabels = [...selections.sensationText].filter(sensation => sensationEmotions[sensation.replace(/\s/g, '-')] === emotion);
+      const sensedLabels = [...selections.sensations].filter(sensation => sensationEmotions[sensation] === emotion);
       emotionContainer.appendChild(createTextElement("p",`You noticed ${sensedLabels.join(', ')}.`));
 
-      const sensationValuesSet = new Set(selections.sensationValues);
-      const excludedLabels = currentEmotionData.sensations.filter(sensation => !sensationValuesSet.has(sensation)).map(sensationValue => sensationValue.replace(/-/g, ' '));
+      const sensationValuesSet = new Set(selections.sensations);
+      const excludedLabels = currentEmotionData.sensations.filter(sensation => !sensationValuesSet.has(sensation));
       emotionContainer.appendChild(createTextElement("p",`Other sensations of ${emotion} can include ${excludedLabels.join(', ')}.`));
 
       emotionContainer.appendChild(createTextElement('h3', 'I feel...'));
@@ -234,7 +233,7 @@
       selections.emotions.forEach(emotion => {
         summaryContainer.appendChild(createTextElement('h3',`Core Emotion: ${emotion}`,true));
 
-        const sensedLabels = [...selections.sensationText].filter(sensation => sensationEmotions[sensation.replace(/\s/g, '-')] === emotion);
+        const sensedLabels = [...selections.sensations].filter(sensation => sensationEmotions[sensation] === emotion);
         summaryContainer.appendChild(createTextElement('h4',`I notice ${sensedLabels.join(', ')}`));
 
         summaryContainer.appendChild(createTextElement('h4',`I feel ${selections.nuanced[emotion].join(', ')}`));

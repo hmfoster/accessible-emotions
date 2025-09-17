@@ -1,9 +1,9 @@
 {
   "Anger": {
     "sensations": {
-      "head": ["furrowed-brow", "clenched-jaw","hot-face"],
-      "torso":["tight-shoulders","tight-abs"],
-      "limbs":["warm-hands","flexed-biceps","clenched-fists","curled-toes"]
+      "head": ["furrowed brow", "clenched jaw","hot face"],
+      "torso":["tight shoulders","tight abs"],
+      "limbs":["warm hands","flexed biceps","clenched fists","curled toes"]
     },
     "nuancedEmotions":["tense","annoyed","frustrated","skeptical","loyal","protective","resistant","defensive","resentful","activated","hateful","rage","something else"],
     "coreNeed": "something to move or change",
@@ -11,11 +11,11 @@
   },
   "Fear": {
       "sensations": {
-      "head": ["wide-eyes-or-pupils","quick-mind","sensitivity-to-sound-or-light"],
-      "torso":["pounding-heart","shallow-breath","tight-chest","butterflies","sensitivity-to-touch"],
-      "limbs":["cold-hands","cold-feet","fidgety-hands-and-feet"]
+      "head": ["wide eyes or pupils","quick mind","sensitivity to sound or light"],
+      "torso":["pounding heart","shallow breath","tight chest","butterflies","sensitivity to touch"],
+      "limbs":["cold hands","cold feet","fidgety hands and feet"]
     },
-    "nuancedEmotions":["worried","nervous","busy","overwhelmed","stressed","imposter-syndrome","fixated","anxious","intimidated","insecure","panic","terrified","something-else"],
+    "nuancedEmotions":["worried","nervous","busy","overwhelmed","stressed","imposter-syndrome","fixated","anxious","intimidated","insecure","panic","terrified","something else"],
     "coreNeed": "a greater sense of safety",
     "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
   },
