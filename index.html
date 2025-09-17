@@ -158,15 +158,18 @@
 
       let matchedEmotions = new Set(selections.sensations.map(sensation => sensationEmotions[sensation]));
       step1.classList.add('hidden');
+      step2.classList.remove('hidden');
       if (matchedEmotions.size === 0) {
-        step3.classList.remove('hidden');
-        summaryContainer.innerHTML = `<h2 id="summaryHeading" tabindex="-1">Summary</h2>
-          <p>You did not select any sensations.</p>`;
-        document.getElementById('summaryHeading').focus();
+        // step2.classList.remove('hidden');
+        nextEmotionBtn.classList.add('hidden');
+        emotionContainer.innerHTML = `<h2 id="error">You did not select any sensations.</h2>`;
+        document.getElementById('error').focus();
         return;
+      } else {
+        nextEmotionBtn.classList.remove('hidden');
       }
 
-      step2.classList.remove('hidden');
+
 
       selections.emotions = [...matchedEmotions];
       currentEmotionIndex = 0;
@@ -257,7 +260,14 @@
         const sensedLabels = [...selections.sensations].filter(sensation => sensationEmotions[sensation] === emotion);
         summaryContainer.appendChild(createTextElement('h4',`I notice ${sensedLabels.join(', ')}`));
 
-        summaryContainer.appendChild(createTextElement('h4',`I feel ${selections.nuanced[emotion].join(', ')}`));
+        const nuancedEmotions = selections.nuanced[emotion];
+        let nuacedText;
+        if (nuancedEmotions.length > 0){
+          nuacedText = `I feel ${nuancedEmotions.join(', ')}`;
+        } else {
+          nuacedText = 'No nuanced feelings selected';
+        }
+        summaryContainer.appendChild(createTextElement('h4',nuacedText));
 
         summaryContainer.appendChild(createTextElement('h4',`I need ${emotionData[emotion].coreNeed}`));
 
@@ -267,13 +277,11 @@
             createCheckbox(need, summaryContainer, true)
           });
         } else {
-          summaryContainer.appendChild(createTextElement('p', "No needs selected."));
+          createCheckbox('No needs selected.',summaryContainer);
+          summaryContainer.appendChild(document.createElement('br'));
         }
-
         summaryContainer.appendChild(document.createElement('br'));
       });
-
-      // setTimeout(()=> h2.focus(), 0);
     }
 
     step3BackBtn.addEventListener('click', () => {
