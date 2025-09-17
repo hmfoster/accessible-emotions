@@ -32,7 +32,7 @@
 
       <!-- Step 2 -->
       <fieldset id="step2" class="hidden" aria-live="polite" aria-atomic="true">
-        <legend>Core Emotions</legend>
+        <legend>Core Emotion</legend>
         <div id="emotionContainer" role="region" aria-label="Current core emotion"></div>
         <button type="button" id="prevEmotionBtn" aria-controls="emotionContainer">Back</button>
         <button type="button" id="nextEmotionBtn" aria-controls="emotionContainer">Next Emotion</button>
@@ -42,6 +42,7 @@
       <fieldset id="step3" class="hidden" aria-live="polite">
         <legend>Summary</legend>
         <div id="summaryContainer" role="region" aria-label="Summary"></div>
+        <button type="button" id="step3BackBtn" aria-controls="summaryContainer">Back</button>
       </fieldset>
     </form>
   </main>
@@ -143,11 +144,10 @@
 
       let matchedEmotions = new Set(selections.sensationValues.map(sensation => sensationEmotions[sensation]));
       step1.classList.add('hidden');
-
       if (matchedEmotions.size === 0) {
-        summaryContainer.classList.remove('hidden');
+        step3.classList.remove('hidden');
         summaryContainer.innerHTML = `<h2 id="summaryHeading" tabindex="-1">Summary</h2>
-          <p>You did not select any sensations. Refresh the page to start over.</p>`;
+          <p>You did not select any sensations.</p>`;
         document.getElementById('summaryHeading').focus();
         return;
       }
@@ -224,8 +224,6 @@
       } else {
         step2.classList.add('hidden');
         step1.classList.remove('hidden');
-        const firstStep1Input = step1.querySelector('input[type="checkbox"]');
-        if (firstStep1Input) setTimeout(()=> firstStep1Input.focus(), 0);
       }
     });
 
@@ -240,7 +238,6 @@
         summaryContainer.appendChild(createTextElement('h4',`I notice ${sensedLabels.join(', ')}`));
 
         summaryContainer.appendChild(createTextElement('h4',`I feel ${selections.nuanced[emotion].join(', ')}`));
-
         summaryContainer.appendChild(createTextElement('h4',`I need ${emotionData[emotion].coreNeed}`));
         const selectedNeeds = selections.needs[emotion];
         if (selectedNeeds.length > 0) {
@@ -254,17 +251,17 @@
         summaryContainer.appendChild(document.createElement('br'));
       });
 
-      const backBtn = createTextElement('button','Back')
-      backBtn.addEventListener('click', () => {
-        step3.classList.add('hidden');
-        step2.classList.remove('hidden');
-        renderEmotion();
-      });
-      summaryContainer.appendChild(backBtn);
-
       // setTimeout(()=> h2.focus(), 0);
-      summaryContainer.classList.remove('hidden');
     }
+
+    step3BackBtn.addEventListener('click', () => {
+        step3.classList.add('hidden');
+        if (selections.emotions.length === 0) {
+          step1.classList.remove('hidden');
+        } else {
+          step2.classList.remove('hidden');
+        }
+    })
 
     loadDataset();
   </script>
