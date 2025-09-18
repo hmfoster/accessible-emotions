@@ -3,6 +3,10 @@
   fieldset { margin-bottom: 1.25rem; }
   h1,h2,h3,h4 { margin: .3rem 0; }
   .summary { border-top: 2px solid #ccc; padding-top: 1rem; margin-top: 1rem; }
+  h3 {
+    border-bottom: 1px solid black;
+    padding: 5px 0;
+  }
   button { margin-top: .5rem; margin-right: .5rem; }
   .sr-only {
     position: absolute;
@@ -22,8 +26,4 @@
   }
   .checkbox-group input[type="checkbox"] {
     margin-right: 0.5rem; /* Adjust spacing as needed */
-  }
-  .horizontal-line {
-    border-top: 1px solid black; /* Creates a 1px solid black line at the top */
-    margin: 10px 0; /* Adds some space above and below the line */
   }
