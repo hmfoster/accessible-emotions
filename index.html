@@ -12,23 +12,24 @@
     <form id="emotionForm" onsubmit="return false;">
       <!-- Step 1 -->
       <fieldset id="step1">
-        <legend>Sensations</legend>
         <button type="button" id="skipSensationsBtn">Skip and explore all emotions</button>
+        <legend>Sensations</legend>
         <div id="sensationsContainer" role="region" aria-label="Sensations by body part">
         </div>
         <button type="button" id="step1Btn">Next</button>
       </fieldset>
 
       <!-- Step 2 -->
-      <fieldset id="step2" class="hidden" aria-live="polite" aria-atomic="true">
+      <fieldset id="step2" class="hidden">
         <legend>Core Emotion</legend>
-        <div id="emotionContainer" role="region" aria-label="Current core emotion"></div>
-        <button type="button" id="prevEmotionBtn" aria-controls="emotionContainer">Back</button>
-        <button type="button" id="nextEmotionBtn" aria-controls="emotionContainer">Next Emotion</button>
+        <div id="emotionContainer" role="region" aria-label="Current core emotion">
+        </div>
+        <button type="button" id="prevEmotionBtn">Back</button>
+        <button type="button" id="nextEmotionBtn">Next Emotion</button>
       </fieldset>
 
       <!-- Step 3 -->
-      <fieldset id="step3" class="hidden" aria-live="polite" aria-atomic="true">
+      <fieldset id="step3" class="hidden">
         <legend>Summary</legend>
         <div id="summaryContainer" role="region" aria-label="Summary"></div>
         <button type="button" id="step3BackBtn" aria-controls="summaryContainer">Back</button>
