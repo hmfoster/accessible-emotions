@@ -12,6 +12,7 @@ const selections = {
       - Make text in selected items change-- stray clicks might not obvious to someone with low vision
       - Input to enter text for "something else"?
    */
+
 const step1 = document.getElementById('step1');
 const sensationsContainer = document.getElementById('sensationsContainer');
 const skipSensationsBtn = document.getElementById('skipSensationsBtn');
@@ -172,7 +173,7 @@ function renderEmotion() {
   });
 
   appendHTML(emotionContainer,'br');
-  appendHTML(emotionContainer,'h3', `${emotion} often indicates a need for ${currentEmotionData.coreNeed}. I will try... [optional] `);
+  appendHTML(emotionContainer,'h3', `I need ${currentEmotionData.coreNeed}. I will try... [optional] `);
 
   const nuancedNeedsGroupDiv = appendHTML(emotionContainer,'div');
   nuancedNeedsGroupDiv.setAttribute(
