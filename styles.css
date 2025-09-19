@@ -7,6 +7,9 @@
     border-bottom: 1px solid black;
     padding: 5px 0;
   }
+  .checkbox-list {
+    padding-inline-start: 0;
+  }
   button { margin-top: .5rem; margin-right: .5rem; }
   .sr-only {
     position: absolute;
@@ -17,7 +20,7 @@
   }
   .checkbox-group {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 0rem 1rem;
   }
   .checkbox-group label {

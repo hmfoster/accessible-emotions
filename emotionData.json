@@ -21,42 +21,44 @@
   },
   "Sadness": {
       "sensations": {
-      "head": [],
-      "torso":[],
-      "limbs":[]
+      "head": ["heavy/numb eyes/mouth/face","crying/release of water/fluid","wailling"],
+      "torso":["heavy heart & breath","\"welling up\" - chest/stomach pressure","cold"],
+      "limbs":["heavy limbs","numbness/lack of sensation"]
     },
-    "nuancedEmotions":[],
-    "coreNeed": "",
-    "nuancedNeeds": ["something else"]
+    "nuancedEmotions":["tired","burnt out", "bored","numb", "left out", "lost", "I miss __ (someone/something)", "disconnected", "disappointed", "heartbroken", "isolated", "grief"],
+    "coreNeed": "connection to self, others or purpose",
+    "nuancedNeeds": ["to rest","to sleep","a break","to be done","to ask for attention","consensual physical touch - a hug, a snuggle, a paw","to cry","friendship","to remember", "something else"]
   },
   "Disgust": {
       "sensations": {
-      "head": [],
-      "torso":[],
+      "head": ["urge to look away or avoid", "\"yuckkk\" - throat clench/closing"],
+      "torso":["activated/clenched stomach","nausea","\"pit in stomach\""],
       "limbs":[]
     },
-    "nuancedEmotions":[],
-    "coreNeed": "",
-    "nuancedNeeds": ["something else"]
+    "nuancedEmotions":["nauseous", "awful", "uncomfortable", "guilt", "avoidance", "aversion", "no good enough", "embarrased", "self-conscious", "judgement", "pity", "shame"],
+    "coreNeed": "support digesting something OR to avoid something toxic to me",
+    "nuancedNeeds": ["to suspend judgement - my own or someone else's","to talk about/share something causing discomfort","to engage or breathe into my belly","to release something","something else"]
   },
   "Joy": {
       "sensations": {
-      "head": [],
-      "torso":[],
-      "limbs":[]
+      "head": ["slow/calm mind","closed/soft eyes","soft jaw"],
+      "torso":["relaxed shoulders","easy breath","spacious heart and gut"],
+      "limbs":["relaxed limbs","soft hands","noticeable toes and feet"]
     },
-    "nuancedEmotions":[],
-    "coreNeed": "",
-    "nuancedNeeds": ["something else"]
+    "nuancedEmotions":["calm","relief","care","settled","gratitude","connected","satisfied","pleasure","awe","acceptance","belonging",  "safety"],
+    "coreNeed": "my needs are met in this moment",
+    "nuancedNeeds": ["savor it","celebrate!","rest","remember this for later","something else"]
   },
   "Genius/Inspired": {
       "sensations": {
-      "head": [],
-      "torso":[],
-      "limbs":[]
+      "head": ["active mind or imagination", "perceptive eyes, ears, tongue, nose"],
+      "torso":["active heart","activated gut"],
+      "limbs":["wiggly limbs","wiggle hands/feet"]
     },
-    "nuancedEmotions":[],
-    "coreNeed": "",
-    "nuancedNeeds": ["something else"]
+    "nuancedEmotions":["curious","creative","excited","silly","focused","confident","interested","challenged","brave","in flow","free","like myself"],
+    "coreNeed": "to express myself",
+    "nuancedNeeds": ["to share my wisdom","to sing","to dance","to play","to explore","to take action","to write","to make something","something else"]
   }
 }
+
+

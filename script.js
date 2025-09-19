@@ -273,15 +273,15 @@ function renderSummary() {
 
     appendHTML(summaryContainer,'br');
     appendHTML(summaryContainer, 'h3', `Core Emotion: ${emotion}`);
-
+    let ul = appendHTML(summaryContainer,'ul');
     let sensationText;
     if (emotionSensations.length > 0) {
       sensationText = `I notice <b>${emotionSensations.join(', ')}</b>.`;
     } else {
-      sensationText = `Sensations of ${emotion} can include ${emotionData[emotion].sensations.join(', ')}.`
+      sensationText = `Sensations of ${emotion.charAt(0).toLowerCase() + emotion.slice(1)} can include ${emotionData[emotion].sensations.join(', ')}.`
     }
 
-    appendHTML(summaryContainer,'p',sensationText);
+    appendHTML(ul,'li',sensationText);
 
     let nuancedText;
     if (nuancedEmotions.length > 0) {
@@ -290,15 +290,17 @@ function renderSummary() {
       nuancedText = 'No specific feelings selected.';
     }
 
-    appendHTML(summaryContainer,'p',nuancedText);
-    appendHTML(summaryContainer,'p', `I need <b>${emotionData[emotion].coreNeed}</b>:`);
+    appendHTML(ul,'li',nuancedText);
+    const needs = appendHTML(ul,'li', `I need <b>${emotionData[emotion].coreNeed}</b>:`);
+    const needsNested = appendHTML(needs,'ul');
+    needsNested.className = 'checkbox-list';
 
     if (emotionNeeds.length > 0) {
       emotionNeeds.forEach((need) => {
-        createCheckbox(need, summaryContainer, true);
+        createCheckbox(need, needsNested, true);
       });
     } else {
-      createCheckbox('No specific needs selected.', summaryContainer);
+      createCheckbox('No specific needs selected.', needsNested);
       appendHTML(summaryContainer,'br');
     }
   });
