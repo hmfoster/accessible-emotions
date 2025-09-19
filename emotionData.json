@@ -1,63 +1,69 @@
 {
-  "Anger": {
-    "sensations": {
-      "head": ["furrowed brow", "clenched jaw","hot face"],
-      "torso":["tight shoulders","tight abs"],
-      "limbs":["warm hands","flexed biceps","clenched fists","curled toes"]
-    },
-    "nuancedEmotions":["tense","annoyed","frustrated","skeptical","loyal","protective","resistant","defensive","resentful","activated","hateful","rage","something else"],
-    "coreNeed": "something to move or change",
-    "nuancedNeeds": ["to get more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","to get a snack/more glucose","something else"]
-  },
-  "Fear": {
-      "sensations": {
-      "head": ["wide eyes or pupils","quick mind","sensitivity to sound or light"],
-      "torso":["pounding heart","shallow breath","tight chest","butterflies","sensitivity to touch"],
-      "limbs":["cold hands","cold feet","fidgety hands and feet"]
-    },
-    "nuancedEmotions":["worried","nervous","busy","overwhelmed","stressed","imposter-syndrome","fixated","anxious","intimidated","insecure","panic","terrified","something else"],
-    "coreNeed": "a greater sense of safety",
-    "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
-  },
-  "Sadness": {
-      "sensations": {
-      "head": ["heavy/numb eyes/mouth/face","crying/release of water/fluid","wailling"],
-      "torso":["heavy heart & breath","\"welling up\" - chest/stomach pressure","cold"],
-      "limbs":["heavy limbs","numbness/lack of sensation"]
-    },
-    "nuancedEmotions":["tired","burnt out", "bored","numb", "left out", "lost", "I miss __ (someone/something)", "disconnected", "disappointed", "heartbroken", "isolated", "grief"],
-    "coreNeed": "connection to self, others or purpose",
-    "nuancedNeeds": ["to rest","to sleep","a break","to be done","to ask for attention","consensual physical touch - a hug, a snuggle, a paw","to cry","friendship","to remember", "something else"]
-  },
-  "Disgust": {
-      "sensations": {
-      "head": ["urge to look away or avoid", "\"yuckkk\" - throat clench/closing"],
-      "torso":["activated/clenched stomach","nausea","\"pit in stomach\""],
-      "limbs":[]
-    },
-    "nuancedEmotions":["nauseous", "awful", "uncomfortable", "guilt", "avoidance", "aversion", "no good enough", "embarrased", "self-conscious", "judgement", "pity", "shame"],
-    "coreNeed": "support digesting something OR to avoid something toxic to me",
-    "nuancedNeeds": ["to suspend judgement - my own or someone else's","to talk about/share something causing discomfort","to engage or breathe into my belly","to release something","something else"]
-  },
-  "Joy": {
-      "sensations": {
-      "head": ["slow/calm mind","closed/soft eyes","soft jaw"],
-      "torso":["relaxed shoulders","easy breath","spacious heart and gut"],
-      "limbs":["relaxed limbs","soft hands","noticeable toes and feet"]
-    },
-    "nuancedEmotions":["calm","relief","care","settled","gratitude","connected","satisfied","pleasure","awe","acceptance","belonging",  "safety"],
-    "coreNeed": "my needs are met in this moment",
-    "nuancedNeeds": ["savor it","celebrate!","rest","remember this for later","something else"]
-  },
-  "Genius/Inspired": {
+  "Generative": {
+      "description": "courage, productivity, and intuition",
       "sensations": {
       "head": ["active mind or imagination", "perceptive eyes, ears, tongue, nose"],
       "torso":["active heart","activated gut"],
       "limbs":["wiggly limbs","wiggle hands/feet"]
     },
-    "nuancedEmotions":["curious","creative","excited","silly","focused","confident","interested","challenged","brave","in flow","free","like myself"],
+    "nuancedEmotions":["challenged","motivated","confident","brave","inspired","moved","passionate","empowered","interested","curious","creative","manic","focused","in flow","excited","silly","free","like myself","something else"],
     "coreNeed": "to express myself",
     "nuancedNeeds": ["to share my wisdom","to sing","to dance","to play","to explore","to take action","to write","to make something","something else"]
+  },
+  "Joy": {
+      "description": "resilience, safety and dignity",
+      "sensations": {
+      "head": ["slow/calm mind","closed/soft eyes","soft jaw"],
+      "torso":["relaxed shoulders","easy breath","spacious heart and gut"],
+      "limbs":["relaxed limbs","soft hands","noticeable toes and feet"]
+    },
+    "nuancedEmotions":["calm","relief","satisfied","gratitude","grounded","present","settled","pleasure","awe","proud","acceptance","belonging","care","love","tender","intimate","connected","seen","something else"],
+    "coreNeed": "my needs are met in this moment",
+    "nuancedNeeds": ["savor it","celebrate!","rest","remember this for later","something else"]
+  },
+  "Disgust": {
+      "description": "aversion or shame",
+      "sensations": {
+      "head": ["urge to look away or avoid", "\"yuckkk\" - throat clench/closing"],
+      "torso":["activated/clenched stomach","nausea","\"pit in stomach\""],
+      "limbs":[]
+    },
+    "nuancedEmotions":["disapproval","not normal","self-conscious","judgement","embarrased", "humiliated","tainted","jealous","uncomfortable","avoidance","nauseous", "awful", "guilt", "ashamed","not good enough","pity","something else"],
+    "coreNeed": "support digesting something OR to avoid something toxic to me",
+    "nuancedNeeds": ["to suspend judgement - my own or someone else's","to talk about/share something causing discomfort","to engage or breathe into my belly","to release something","something else"]
+  },
+  "Fear": {
+      "description": "fragility and vulnerability",
+      "sensations": {
+      "head": ["wide eyes or pupils","quick mind","sensitivity to sound or light"],
+      "torso":["pounding heart","shallow breath","tight chest","butterflies","sensitivity to touch"],
+      "limbs":["cold hands","cold feet","fidgety hands and feet"]
+    },
+    "nuancedEmotions":["imposter syndrome", "insignificant","stressed","overwhelmed","worried","fixated","uncontrollable","addicted","threatened","unsafe","nervous","anxious","panic","terrified","intimidated","insecure","surprised","taken advantage of","something else"],
+    "coreNeed": "a greater sense of safety",
+    "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
+  },
+  "Sadness": {
+      "description": "isolation and grief",
+      "sensations": {
+      "head": ["heavy/numb eyes/mouth/face","crying/release of water/fluid","wailling"],
+      "torso":["heavy heart & breath","\"welling up\" - chest/stomach pressure","cold"],
+      "limbs":["heavy limbs","numbness/lack of sensation"]
+    },
+    "nuancedEmotions":["purposeless","lost","unmotivated","burnt out","bored","numb","tired","exhausted","disappointed","depressed","lonely","loss", "I miss __ (someone/something)","heartbroken","disconnected","left out","hurt","something else"],
+    "coreNeed": "connection to self, others or purpose",
+    "nuancedNeeds": ["to rest","to sleep","a break","to be done","to ask for attention","consensual physical touch - a hug, a snuggle, a paw","to cry","friendship","to remember", "something else"]
+  },
+  "Anger": {
+    "description": "reactivity to rage",
+    "sensations": {
+      "head": ["furrowed brow", "clenched jaw","hot face"],
+      "torso":["tight shoulders","tight abs"],
+      "limbs":["warm hands","flexed biceps","clenched fists","curled toes"]
+    },
+    "nuancedEmotions":["tense","hateful","aggressive","violent","mad","furious","annoyed","frustrated","irritated","resistant","defensive","resentful","envious","skeptical","suspicious","protective","loyal","something else"],
+    "coreNeed": "something to move or change",
+    "nuancedNeeds": ["to get more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","to get a snack/more glucose","something else"]
   }
 }
 

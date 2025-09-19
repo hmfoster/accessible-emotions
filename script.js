@@ -10,11 +10,7 @@ const selections = {
 };
 /* IDEAS
       - Make text in selected items change-- stray clicks might not obvious to someone with low vision
-      - Dropdown to navigate between emotions?
       - Input to enter text for "something else"?
-    */
-/* NEXT
-   See chatgpt for how to make nav better for screen reader
    */
 const step1 = document.getElementById('step1');
 const sensationsContainer = document.getElementById('sensationsContainer');
@@ -130,6 +126,9 @@ function renderEmotion() {
 
   const emotion = selections.emotions[currentEmotionIndex];
   const currentEmotionData = emotionData[emotion];
+
+  const description = `The core emotion of "${emotion.charAt(0).toLowerCase() + emotion.slice(1)}" can invoke feelings of ${currentEmotionData.description}.`
+
   if (selections.nuanced[emotion] === undefined) selections.nuanced[emotion] = [];
   if (selections.needs[emotion] === undefined) selections.needs[emotion] = [];
 
@@ -149,13 +148,13 @@ function renderEmotion() {
       (sensation) => !sensationValuesSet.has(sensation)
     );
 
-    sensationText += ` Other sensations of ${emotion.charAt(0).toLowerCase() + emotion.slice(1)} can include ${excludedLabels.join(", ")}.`
+    sensationText += ` Other physical sensations of ${emotion.charAt(0).toLowerCase() + emotion.slice(1)} can include ${excludedLabels.join(", ")}.`
 
   } else {
-    sensationText = `Sensations of ${emotion.charAt(0).toLowerCase() +
+    sensationText = `Physical sensations of ${emotion.charAt(0).toLowerCase() +
       emotion.slice(1)} can include ${currentEmotionData.sensations.join(", ")}.`
   }
-  appendHTML(emotionContainer,'p',sensationText);
+  appendHTML(emotionContainer,'p',description + ' ' + sensationText);
   appendHTML(emotionContainer,'h3','More specifically, I feel... [optional]');
 
   const nuancedEmotionsGroupDiv = appendHTML(emotionContainer,'div');
