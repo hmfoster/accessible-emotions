@@ -4,10 +4,10 @@
       "sensations": {
       "head": ["active mind or imagination", "perceptive eyes, ears, tongue, nose"],
       "torso":["active heart","activated gut"],
-      "limbs":["wiggly limbs","wiggle hands/feet"]
+      "limbs":["wiggly limbs","wiggly hands/feet"]
     },
     "nuancedEmotions":["challenged","motivated","confident","brave","inspired","moved","passionate","empowered","interested","curious","creative","manic","focused","in flow","excited","silly","free","like myself","something else"],
-    "coreNeed": "to express myself",
+    "coreNeed": "expressing yourself",
     "nuancedNeeds": ["to share my wisdom","to sing","to dance","to play","to explore","to take action","to write","to make something","something else"]
   },
   "Joy": {
@@ -18,7 +18,7 @@
       "limbs":["relaxed limbs","soft hands","noticeable toes and feet"]
     },
     "nuancedEmotions":["calm","relief","satisfied","gratitude","grounded","present","settled","pleasure","awe","proud","acceptance","belonging","care","love","tender","intimate","connected","seen","something else"],
-    "coreNeed": "my needs are met in this moment",
+    "coreNeed": "nothing! It generally means your needs are met in this moment",
     "nuancedNeeds": ["savor it","celebrate!","rest","remember this for later","something else"]
   },
   "Disgust": {
