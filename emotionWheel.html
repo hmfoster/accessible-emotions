@@ -1,0 +1,494 @@
+<!-- This file combines the json data, scripts, and css so that it can be opened directly in a browser without requiring a server instance -->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Emotion Mapper</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .hidden { display: none; }
+    fieldset { margin-bottom: 1.25rem; }
+    h1,h2,h3,h4 { margin: .3rem 0; }
+    .summary { border-top: 2px solid #ccc; padding-top: 1rem; margin-top: 1rem; }
+    h3 {
+      border-bottom: 1px solid black;
+      padding: 5px 0;
+    }
+    .checkbox-list {
+      padding-inline-start: 0;
+    }
+    button { margin-top: .5rem; margin-right: .5rem; }
+    .sr-only {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 0rem 1rem;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+    }
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 0.5rem; /* Adjust spacing as needed */
+    }
+  </style>
+</head>
+<body>
+  <main role="main">
+    <h1>Emotion Identification Tool</h1>
+    <section id="tool-introduction">
+      <p>This tool is a screen reader accessible version of the emotion wheel created by Abby Vanmuijen. You can find the original version of her work <a href="https://www.avanmuijen.com/watercolor-emotion-wheel">here</a>.</p>
+      <h4> How to use this tool </h4>
+      You can use this tool both to reflect on your own emotions or to learn more about each emotion in general.
+      <ol>
+        <li>The first page presents a series of body sensations grouped by "head", "torso", and "limbs" that are often associated with different emotions. Take a moment to scan through your body and select any sensations you notice. The following pages will then include any core emotions that matched the selected body sensations.</li>
+          <ul>
+            <li>If you prefer, you can also skip this step by clicking the button that says "Skip and explore all emotions". This will let you read through every emotion in the following pages</li>
+          </ul>
+        <li>
+          The next set of pages each present a different core emotion along with their associated body sensations, specific feelings or subtypes of that emotion, and what that emotion might be telling you that you need. You can select any specific feeling and/or need that feels relevant to you in moment.
+        </li>
+        <li>Finally, the last page will summarize any selections you made on the previous pages for easy reference and further reflection. If you'd like, there is a button that lets you copy all of the text on the summary page so that you can paste it elsewhere-- for example, a journal or a message to a friend.</li>
+      </ol>
+    </section>
+
+    <form id="emotionForm" onsubmit="return false;">
+
+      <fieldset id="step1">
+        <legend class="sr-only">Sensations</legend>
+        <div id="sensationsContainer" tabindex="-1" role="region" aria-label="Sensations by body part">
+          </br>
+          <h2>I notice...</h2>
+          <p>Select all the body sensations you are currently aware of feeling.</p>
+          <button type="button" id="skipSensationsBtn">Skip and explore all emotions</button>
+          </br>
+        </div>
+        <button type="button" id="step1Btn">Next</button>
+      </fieldset>
+
+      <!-- Step 2 -->
+      <fieldset id="step2" class="hidden">
+        <legend class="sr-only">Core Emotion</legend>
+        <div id="emotionContainer" tabindex="-1" role="region" aria-label="Current core emotion">
+        </div>
+        <button type="button" id="prevEmotionBtn">Back</button>
+        <button type="button" id="nextEmotionBtn">Next Emotion</button>
+      </fieldset>
+
+      <!-- Step 3 -->
+      <fieldset id="step3" class="hidden">
+        <legend class="sr-only">Summary</legend>
+        <div id="summaryContainer" tabindex="-1" role="region" aria-label="Summary of current body sensations, emotions and needs."></div>
+        <button type="button" id="step3BackBtn" aria-controls="summaryContainer">Back</button>
+        <button id="copyBtn">Copy Summary</button>
+      </fieldset>
+    </form>
+  </main>
+
+  <script>
+    let emotionData = {
+      "Generative": {
+          "description": "courage, productivity, and intuition",
+          "sensations": {
+          "head": ["active mind or imagination", "perceptive eyes, ears, tongue, nose"],
+          "torso":["active heart","activated gut"],
+          "limbs":["wiggly limbs","wiggly hands/feet"]
+        },
+        "nuancedEmotions":["challenged","motivated","confident","brave","inspired","moved","passionate","empowered","interested","curious","creative","manic","focused","in flow","excited","silly","free","like myself","something else"],
+        "coreNeed": "expressing yourself",
+        "nuancedNeeds": ["to share my wisdom","to sing","to dance","to play","to explore","to take action","to write","to make something","something else"]
+      },
+      "Joy": {
+          "description": "resilience, safety and dignity",
+          "sensations": {
+          "head": ["slow/calm mind","closed/soft eyes","soft jaw"],
+          "torso":["relaxed shoulders","easy breath","spacious heart and gut"],
+          "limbs":["relaxed limbs","soft hands","noticeable toes and feet"]
+        },
+        "nuancedEmotions":["calm","relief","satisfied","gratitude","grounded","present","settled","pleasure","awe","proud","acceptance","belonging","care","love","tender","intimate","connected","seen","something else"],
+        "coreNeed": "nothing! It generally means your needs are met in this moment",
+        "nuancedNeeds": ["savor it","celebrate!","rest","remember this for later","something else"]
+      },
+      "Disgust": {
+          "description": "aversion or shame",
+          "sensations": {
+          "head": ["urge to look away or avoid", "\"yuckkk\" - throat clench/closing"],
+          "torso":["activated/clenched stomach","nausea","\"pit in stomach\""],
+          "limbs":[]
+        },
+        "nuancedEmotions":["disapproval","not normal","self-conscious","judgement","embarrased", "humiliated","tainted","jealous","uncomfortable","avoidance","nauseous", "awful", "guilt", "ashamed","not good enough","pity","something else"],
+        "coreNeed": "support digesting something OR to avoid something toxic to me",
+        "nuancedNeeds": ["to suspend judgement - my own or someone else's","to talk about/share something causing discomfort","to engage or breathe into my belly","to release something","something else"]
+      },
+      "Fear": {
+          "description": "fragility and vulnerability",
+          "sensations": {
+          "head": ["wide eyes or pupils","quick mind","sensitivity to sound or light"],
+          "torso":["pounding heart","shallow breath","tight chest","butterflies","sensitivity to touch"],
+          "limbs":["cold hands","cold feet","fidgety hands and feet"]
+        },
+        "nuancedEmotions":["imposter syndrome", "insignificant","stressed","overwhelmed","worried","fixated","uncontrollable","addicted","threatened","unsafe","nervous","anxious","panic","terrified","intimidated","insecure","surprised","taken advantage of","something else"],
+        "coreNeed": "a greater sense of safety",
+        "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
+      },
+      "Sadness": {
+          "description": "isolation and grief",
+          "sensations": {
+          "head": ["heavy/numb eyes/mouth/face","crying/release of water/fluid","wailling"],
+          "torso":["heavy heart & breath","\"welling up\" - chest/stomach pressure","cold"],
+          "limbs":["heavy limbs","numbness/lack of sensation"]
+        },
+        "nuancedEmotions":["purposeless","lost","unmotivated","burnt out","bored","numb","tired","exhausted","disappointed","depressed","lonely","loss", "I miss __ (someone/something)","heartbroken","disconnected","left out","hurt","something else"],
+        "coreNeed": "connection to self, others or purpose",
+        "nuancedNeeds": ["to rest","to sleep","a break","to be done","to ask for attention","consensual physical touch - a hug, a snuggle, a paw","to cry","friendship","to remember", "something else"]
+      },
+      "Anger": {
+        "description": "reactivity to rage",
+        "sensations": {
+          "head": ["furrowed brow", "clenched jaw","hot face"],
+          "torso":["tight shoulders","tight abs"],
+          "limbs":["warm hands","flexed biceps","clenched fists","curled toes"]
+        },
+        "nuancedEmotions":["tense","hateful","aggressive","violent","mad","furious","annoyed","frustrated","irritated","resistant","defensive","resentful","envious","skeptical","suspicious","protective","loyal","something else"],
+        "coreNeed": "something to move or change",
+        "nuancedNeeds": ["to get more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","to get a snack/more glucose","something else"]
+      }
+    };
+    let partSensations = {};
+    let sensationEmotions = {};
+    let currentEmotionIndex = 0;
+    const selections = {
+      sensations: [],
+      emotions: [],
+      nuanced: {},
+      needs: {},
+    };
+    const step1 = document.getElementById('step1');
+    const sensationsContainer = document.getElementById('sensationsContainer');
+    const skipSensationsBtn = document.getElementById('skipSensationsBtn');
+    const step1Btn = document.getElementById('step1Btn');
+
+    const step2 = document.getElementById('step2');
+    const emotionContainer = document.getElementById('emotionContainer');
+    const nextEmotionBtn = document.getElementById('nextEmotionBtn');
+    const prevEmotionBtn = document.getElementById('prevEmotionBtn');
+
+    const step3 = document.getElementById('step3');
+    const summaryContainer = document.getElementById('summaryContainer');
+    const step3BackBtn = document.getElementById('step3BackBtn');
+    const copySummaryBtn = document.getElementById('copyBtn');
+
+    async function loadDataset() {
+
+
+      let sensations, sensation;
+      for (const emotion in emotionData) {
+        sensations = emotionData[emotion].sensations;
+        for (const bodyPart in sensations) {
+          if (partSensations[bodyPart] === undefined) {
+            partSensations[bodyPart] = [];
+          }
+          sensations[bodyPart].forEach((sensation) => {
+            partSensations[bodyPart].push(sensation);
+            sensationEmotions[sensation] = emotion;
+          });
+        }
+        emotionData[emotion].sensations = Object.values(sensations).flat();
+      }
+      renderSensations();
+    }
+
+    function appendHTML(container, type, innerhtml) {
+      const element = document.createElement(type);
+      element.innerHTML = innerhtml || '';
+      container.appendChild(element);
+      return element;
+    }
+
+    function createCheckbox(value, container, addBreak) {
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = value;
+
+      const label = document.createElement('label');
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(' ' + value));
+
+      container.appendChild(label);
+      if (addBreak) container.appendChild(document.createElement('br'));
+
+      return input;
+    }
+
+    function renderSensations() {
+      for (part in partSensations) {
+        appendHTML(sensationsContainer,'br');
+        appendHTML(sensationsContainer, 'h3',`${part.charAt(0).toUpperCase() + part.slice(1)}`);
+
+        const groupDiv = appendHTML(sensationsContainer,'div');
+        groupDiv.className = 'checkbox-group';
+        groupDiv.setAttribute(
+          'aria-label',
+          `Select all the sensations in your ${part} you are aware of.`
+        );
+
+        partSensations[part].forEach((sensation) => {
+          createCheckbox(sensation, groupDiv);
+        });
+      }
+
+    };
+
+    skipSensationsBtn.addEventListener("click", () => {
+      selections.emotions = Object.keys(emotionData);
+      step1.classList.add("hidden");
+      step2.classList.remove("hidden");
+      nextEmotionBtn.classList.remove("hidden");
+      renderEmotion();
+    });
+
+    step1Btn.addEventListener("click", () => {
+      const checked = Array.from(
+        document.querySelectorAll('#step1 input[type="checkbox"]:checked')
+      );
+
+      selections.sensations = checked.map((cb) => cb.value);
+      let matchedEmotions = new Set(
+        selections.sensations.map((sensation) => sensationEmotions[sensation])
+      );
+
+      step1.classList.add("hidden");
+      step2.classList.remove("hidden");
+      if (matchedEmotions.size === 0) {
+        nextEmotionBtn.classList.add("hidden");
+        emotionContainer.innerHTML =
+          `<h2>You did not select any sensations.</h2>
+          <p>Go back to select body sensations or explore all emotions.</p>`;
+        return;
+      }
+      nextEmotionBtn.classList.remove("hidden");
+      selections.emotions = [...matchedEmotions];
+      renderEmotion();
+    });
+
+    function renderEmotion() {
+      emotionContainer.innerHTML = "";
+
+      const emotion = selections.emotions[currentEmotionIndex];
+      const currentEmotionData = emotionData[emotion];
+
+      const description = `The core emotion of "${emotion.charAt(0).toLowerCase() + emotion.slice(1)}" can invoke feelings of ${currentEmotionData.description}.`
+
+      if (selections.nuanced[emotion] === undefined) selections.nuanced[emotion] = [];
+      if (selections.needs[emotion] === undefined) selections.needs[emotion] = [];
+
+      appendHTML(emotionContainer,'br');
+      const h2 = appendHTML(emotionContainer,'h2', emotion);
+
+      let sensationText;
+      if (selections.sensations.length > 0) {
+        const sensedLabels = [...selections.sensations].filter(
+          (sensation) => sensationEmotions[sensation] === emotion
+        );
+
+        sensationText = `You noticed <b>${sensedLabels.join(", ")}</b>.`;
+
+        const sensationValuesSet = new Set(selections.sensations);
+        const excludedLabels = currentEmotionData.sensations.filter(
+          (sensation) => !sensationValuesSet.has(sensation)
+        );
+
+        sensationText += ` Other physical sensations of ${emotion.charAt(0).toLowerCase() + emotion.slice(1)} can include ${excludedLabels.join(", ")}.`
+
+      } else {
+        sensationText = `Physical sensations of ${emotion.charAt(0).toLowerCase() +
+          emotion.slice(1)} can include ${currentEmotionData.sensations.join(", ")}.`
+      }
+      appendHTML(emotionContainer,'p',description + ' ' + sensationText);
+      appendHTML(emotionContainer,'h3','More specifically, I feel... [optional]');
+
+      const nuancedEmotionsGroupDiv = appendHTML(emotionContainer,'div');
+      nuancedEmotionsGroupDiv.className = "checkbox-group";
+      nuancedEmotionsGroupDiv.setAttribute(
+        "aria-label",
+        "If applicable, select any more specific feelings you may be having"
+      );
+
+      currentEmotionData.nuancedEmotions.forEach((nuEmotion) => {
+        const cb = createCheckbox(nuEmotion, nuancedEmotionsGroupDiv);
+        cb.dataset.type = "nuanced";
+        cb.dataset.emotion = emotion;
+        if (selections.nuanced[emotion].includes(nuEmotion)) cb.checked = true;
+      });
+
+      appendHTML(emotionContainer,'br');
+      appendHTML(emotionContainer,'h3', `${emotion} often indicates a need for ${currentEmotionData.coreNeed}. I will try... [optional] `);
+
+      const nuancedNeedsGroupDiv = appendHTML(emotionContainer,'div');
+      nuancedNeedsGroupDiv.setAttribute(
+        'aria-label',
+        'If applicable, select any more specific needs you may have'
+      );
+
+      currentEmotionData.nuancedNeeds.forEach((nuNeed) => {
+        const cb = createCheckbox(nuNeed, nuancedNeedsGroupDiv, true);
+        cb.dataset.type = "need";
+        cb.dataset.emotion = emotion;
+        if (selections.needs[emotion].includes(nuNeed)) cb.checked = true;
+      });
+
+      nextEmotionBtn.textContent =
+        currentEmotionIndex < selections.emotions.length - 1
+          ? "Next Emotion"
+          : "See Summary";
+      setTimeout(() => emotionContainer.focus());
+    }
+
+    function saveCurrentSelections() {
+      const emotion = selections.emotions[currentEmotionIndex];
+      selections.nuanced[emotion] = Array.from(
+        document.querySelectorAll(
+          `input[data-type='nuanced'][data-emotion='${emotion}']:checked`
+        )
+      ).map((cb) => cb.value);
+      selections.needs[emotion] = Array.from(
+        document.querySelectorAll(
+          `input[data-type='need'][data-emotion='${emotion}']:checked`
+        )
+      ).map((cb) => cb.value);
+    }
+
+    nextEmotionBtn.addEventListener("click", () => {
+      saveCurrentSelections();
+      if (currentEmotionIndex < selections.emotions.length - 1) {
+        currentEmotionIndex++;
+        renderEmotion();
+      } else {
+        step2.classList.add("hidden");
+        step3.classList.remove("hidden");
+        renderSummary();
+      }
+    });
+
+    prevEmotionBtn.addEventListener("click", () => {
+      saveCurrentSelections();
+      if (currentEmotionIndex > 0) {
+        currentEmotionIndex--;
+        renderEmotion();
+      } else {
+        step2.classList.add("hidden");
+        step1.classList.remove("hidden");
+        setTimeout(()=>sensationsContainer.focus());
+      }
+    });
+
+    function renderSummary() {
+      saveCurrentSelections();
+      summaryContainer.innerHTML = "";
+
+      const selectedSensations = selections.sensations;
+      const selectedNuanced = selections.nuanced;
+      const selectedNeeds = selections.needs;
+
+      if (
+        !(
+          selectedSensations.length ||
+          Object.values(selectedNuanced).flat().length ||
+          Object.values(selectedNeeds).flat().length
+        )
+      ) {
+        summaryContainer.innerHTML = `<h2>You did not select anything. Go back to previous emotion/s or refresh page to start over.</h2>`;
+        return;
+      }
+
+      let h2 = appendHTML(summaryContainer,'h2','Overall I feel...');
+
+      selections.emotions.forEach((emotion) => {
+        const emotionSensations = [...selectedSensations].filter(
+          (sensation) => sensationEmotions[sensation] === emotion
+        );
+        const nuancedEmotions = selectedNuanced[emotion];
+        const emotionNeeds = selectedNeeds[emotion];
+
+        if (
+          !(
+            emotionSensations.length ||
+            emotionNeeds.length ||
+            nuancedEmotions.length
+          )
+        ) {
+          return;
+        }
+
+        appendHTML(summaryContainer,'br');
+        appendHTML(summaryContainer, 'h3', `Core Emotion: ${emotion}`);
+        let ul = appendHTML(summaryContainer,'ul');
+        let sensationText;
+        if (emotionSensations.length > 0) {
+          sensationText = `I notice <b>${emotionSensations.join(', ')}</b>.`;
+        } else {
+          sensationText = `Sensations of ${emotion.charAt(0).toLowerCase() + emotion.slice(1)} can include ${emotionData[emotion].sensations.join(', ')}.`
+        }
+
+        appendHTML(ul,'li',sensationText);
+
+        let nuancedText;
+        if (nuancedEmotions.length > 0) {
+          nuancedText = `Specifically, I feel <b>${nuancedEmotions.join(', ')}</b>.`;
+        } else {
+          nuancedText = 'No specific feelings selected.';
+        }
+
+        appendHTML(ul,'li',nuancedText);
+        const needs = appendHTML(ul,'li', `I need <b>${emotionData[emotion].coreNeed}</b>:`);
+        const needsNested = appendHTML(needs,'ul');
+        needsNested.className = 'checkbox-list';
+
+        if (emotionNeeds.length > 0) {
+          emotionNeeds.forEach((need) => {
+            createCheckbox(need, needsNested, true);
+          });
+        } else {
+          createCheckbox('No specific needs selected.', needsNested);
+          appendHTML(summaryContainer,'br');
+        }
+      });
+
+      setTimeout(()=>h2.focus());
+    }
+
+    step3BackBtn.addEventListener('click', () => {
+      step3.classList.add('hidden');
+      if (selections.emotions.length === 0) {
+        step1.classList.remove('hidden');
+      } else {
+        step2.classList.remove('hidden');
+      }
+    });
+
+    copySummaryBtn.addEventListener('click', () => {
+      const summaryText = document.getElementById('summaryContainer').innerText;
+      navigator.clipboard
+        .writeText(summaryText)
+        .then(() => {
+          console.log('Summary copied to clipboard!');
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+        });
+    });
+
+    loadDataset();
+
+
+  </script>
+
+</body>
+</html>
