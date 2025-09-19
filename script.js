@@ -115,6 +115,7 @@ step1Btn.addEventListener("click", () => {
     emotionContainer.innerHTML =
       `<h2>You did not select any sensations.</h2>
       <p>Go back to select body sensations or explore all emotions.</p>`;
+      setTimeout(()=> emotionContainer.focus());
     return;
   }
   nextEmotionBtn.classList.remove("hidden");
@@ -156,7 +157,7 @@ function renderEmotion() {
       emotion.slice(1)} can include ${currentEmotionData.sensations.join(", ")}.`
   }
   appendHTML(emotionContainer,'p',description + ' ' + sensationText);
-  appendHTML(emotionContainer,'h3','More specifically, I feel... [optional]');
+  appendHTML(emotionContainer,'h3','More specifically, I feel...');
 
   const nuancedEmotionsGroupDiv = appendHTML(emotionContainer,'div');
   nuancedEmotionsGroupDiv.className = "checkbox-group";
@@ -173,7 +174,7 @@ function renderEmotion() {
   });
 
   appendHTML(emotionContainer,'br');
-  appendHTML(emotionContainer,'h3', `I need ${currentEmotionData.coreNeed}. I will try... [optional] `);
+  appendHTML(emotionContainer,'h3', `I need ${currentEmotionData.coreNeed}. I will try...`);
 
   const nuancedNeedsGroupDiv = appendHTML(emotionContainer,'div');
   nuancedNeedsGroupDiv.setAttribute(
@@ -291,7 +292,7 @@ function renderSummary() {
     }
 
     appendHTML(ul,'li',nuancedText);
-    const needs = appendHTML(ul,'li', `I need <b>${emotionData[emotion].coreNeed}</b>:`);
+    const needs = appendHTML(ul,'li', `I need <b>${emotionData[emotion].coreNeed}</b>. I've decided to:`);
     const needsNested = appendHTML(needs,'ul');
     needsNested.className = 'checkbox-list';
 
@@ -305,7 +306,7 @@ function renderSummary() {
     }
   });
 
-  setTimeout(()=>h2.focus());
+  setTimeout(() => summaryContainer.focus());
 }
 
 step3BackBtn.addEventListener('click', () => {
