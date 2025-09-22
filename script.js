@@ -61,6 +61,7 @@ function createInput(value, container, addBreak) {
     input.type = 'text';
     input.className = 'something-else-input';
     input.setAttribute('placeholder','optional; enter something else');
+    input.setAttribute('size','27');
   } else{
     input.type = 'checkbox';
     input.value = value;
