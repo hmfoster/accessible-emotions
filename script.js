@@ -66,14 +66,14 @@ function createCheckbox(value, container, addBreak) {
   label.appendChild(document.createTextNode(' ' + value));
 
   container.appendChild(label);
-  if (addBreak) container.appendChild(document.createElement('br'));
+  if (addBreak) appendHTML(container,'br').setAttribute("aria-hidden", true);
 
   return input;
 }
 
 function renderSensations() {
   for (part in partSensations) {
-    appendHTML(sensationsContainer,'br');
+    appendHTML(sensationsContainer,'br').setAttribute('aria-hidden', true)
     appendHTML(sensationsContainer, 'h3',`${part.charAt(0).toUpperCase() + part.slice(1)}`);
 
     const groupDiv = appendHTML(sensationsContainer,'div');
@@ -290,20 +290,24 @@ function renderSummary() {
     } else {
       nuancedText = 'No specific feelings selected.';
     }
+    appendHTML(ul,'li', nuancedText);
 
-    appendHTML(ul,'li',nuancedText);
-    const needs = appendHTML(ul,'li', `I need <b>${emotionData[emotion].coreNeed}</b>. I've decided to:`);
-    const needsNested = appendHTML(needs,'ul');
-    needsNested.className = 'checkbox-list';
-
-    if (emotionNeeds.length > 0) {
-      emotionNeeds.forEach((need) => {
-        createCheckbox(need, needsNested, true);
-      });
+    let needsSentence = `I need <b>${emotionData[emotion].coreNeed}</b>. I've decided `;
+    if (emotionNeeds.length === 0){
+      needsSentence += '(no specific needs selected.)';
+    } else if (emotionNeeds.length === 1) {
+      needsSentence += `${emotionNeeds[0]}.`;
     } else {
-      createCheckbox('No specific needs selected.', needsNested);
-      appendHTML(summaryContainer,'br');
+      needsSentence += ':'
     }
+    const needs = appendHTML(ul,'li', needsSentence);
+        //  appendHTML(summaryContainer,'br');
+    if (emotionNeeds.length > 1) {
+      const needsNested = appendHTML(needs,'ul');
+      emotionNeeds.forEach((need) => {
+        appendHTML(needsNested, 'li', need);
+      });
+    } 
   });
 
   setTimeout(() => summaryContainer.focus());

@@ -8,7 +8,7 @@
     },
     "nuancedEmotions":["challenged","motivated","confident","brave","inspired","moved","passionate","empowered","interested","curious","creative","manic","focused","in flow","excited","silly","free","like myself","something else"],
     "coreNeed": "to express myself",
-    "nuancedNeeds": ["to share my wisdom","to sing","to dance","to play","to explore","to take action","to write","to make something","something else"]
+    "nuancedNeeds": ["to share my wisdom","to sing","to dance","to play","to explore","to take action","to write","to make something","to do something else"]
   },
   "Joy": {
       "description": "resilience, safety and dignity",
@@ -19,7 +19,7 @@
     },
     "nuancedEmotions":["calm","relief","satisfied","gratitude","grounded","present","settled","pleasure","awe","proud","acceptance","belonging","care","love","tender","intimate","connected","seen","something else"],
     "coreNeed": "nothing! Joy generally means all needs are met in this moment",
-    "nuancedNeeds": ["savor it","celebrate!","rest","remember this for later","something else"]
+    "nuancedNeeds": ["to savor it","to celebrate!","to rest","to remember this for later","to  do something else"]
   },
   "Disgust": {
       "description": "aversion or shame",
@@ -30,7 +30,7 @@
     },
     "nuancedEmotions":["disapproval","not normal","self-conscious","judgement","embarrased", "humiliated","tainted","jealous","uncomfortable","avoidance","nauseous", "awful", "guilt", "ashamed","not good enough","pity","something else"],
     "coreNeed": "support digesting something OR to avoid something toxic to me",
-    "nuancedNeeds": ["to suspend judgement - my own or someone else's","to talk about/share something causing discomfort","to engage or breathe into my belly","to release something","something else"]
+    "nuancedNeeds": ["to suspend judgement - my own or someone else's","to talk about/share something causing discomfort","to engage or breathe into my belly","to release something","to  do something else"]
   },
   "Fear": {
       "description": "fragility and vulnerability",
@@ -41,7 +41,7 @@
     },
     "nuancedEmotions":["imposter syndrome", "insignificant","stressed","overwhelmed","worried","fixated","uncontrollable","addicted","threatened","unsafe","nervous","anxious","panic","terrified","intimidated","insecure","surprised","taken advantage of","something else"],
     "coreNeed": "a greater sense of safety",
-    "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "something else"]
+    "nuancedNeeds": ["to take a breath or change my breathing","to discharge energy - move, shake, grunt", "to leave or be further away", "to slow down", "to speed up", "to ground in the present", "to do something else"]
   },
   "Sadness": {
       "description": "isolation and grief",
@@ -52,7 +52,7 @@
     },
     "nuancedEmotions":["purposeless","lost","unmotivated","burnt out","bored","numb","tired","exhausted","disappointed","depressed","lonely","loss", "I miss __ (someone/something)","heartbroken","disconnected","left out","hurt","something else"],
     "coreNeed": "connection to self, others or purpose",
-    "nuancedNeeds": ["to rest","to sleep","a break","to be done","to ask for attention","consensual physical touch - a hug, a snuggle, a paw","to cry","friendship","to remember", "something else"]
+    "nuancedNeeds": ["to rest","to sleep","a break","to be done","to ask for attention","to ask for consensual physical touch - a hug, a snuggle, a paw","to cry","to engage in friendship","to remember", "to do something else"]
   },
   "Anger": {
     "description": "reactivity to rage",
@@ -63,7 +63,7 @@
     },
     "nuancedEmotions":["tense","hateful","aggressive","violent","mad","furious","annoyed","frustrated","irritated","resistant","defensive","resentful","envious","skeptical","suspicious","protective","loyal","something else"],
     "coreNeed": "something to move or change",
-    "nuancedNeeds": ["to get more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","to get a snack/more glucose","something else"]
+    "nuancedNeeds": ["to get more information - clarity or understanding","to be heard/noticed","to say 'No'","to discharge energy - squeeze, yell, move","to set a boundary","to get a snack/more glucose","to do something else"]
   }
 }
 

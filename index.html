@@ -41,21 +41,20 @@
     <form id="emotionForm" onsubmit="return false;">
 
       <fieldset id="step1">
-        <legend class="sr-only">Sensations</legend>
-        <div id="sensationsContainer" tabindex="-1" role="region" aria-label="Sensations by body part">
-          </br>
+        <legend hidden="true">Sensations</legend>
+        <div id="sensationsContainer" tabindex="-1" role="region" aria-label="Sensations">
+          <br aria-hidden="true"></br>
           <h2>I notice...</h2>
           <p>Select all the body sensations you are currently aware of feeling.</p>
           <button type="button" id="skipSensationsBtn">Skip and explore all emotions</button>
-          </br>
         </div>
         <button type="button" id="step1Btn">Next</button>
       </fieldset>
 
       <!-- Step 2 -->
       <fieldset id="step2" class="hidden">
-        <legend class="sr-only">Core Emotion</legend>
-        <div id="emotionContainer" tabindex="-1" role="region" aria-label="Current core emotion">
+        <legend hidden="true">Core Emotion</legend>
+        <div id="emotionContainer" tabindex="-1" role="region" aria-label="Core emotion">
         </div>
         <button type="button" id="prevEmotionBtn">Back</button>
         <button type="button" id="nextEmotionBtn">Next Emotion</button>
@@ -63,8 +62,8 @@
 
       <!-- Step 3 -->
       <fieldset id="step3" class="hidden">
-        <legend class="sr-only">Summary</legend>
-        <div id="summaryContainer" tabindex="-1" role="region" aria-label="Summary of current body sensations, emotions and needs."></div>
+        <legend hidden="true">Summary</legend>
+        <div id="summaryContainer" tabindex="-1" role="region" aria-label="Summary"></div>
         <button type="button" id="step3BackBtn" aria-controls="summaryContainer">Back</button>
         <button id="copyBtn">Copy Summary</button>
       </fieldset>
