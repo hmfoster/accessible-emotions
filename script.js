@@ -8,10 +8,6 @@ const selections = {
   nuanced: {},
   needs: {},
 };
-/* IDEAS
-      - Make text in selected items change-- stray clicks might not obvious to someone with low vision
-      - Input to enter text for "something else"?
-   */
 
 const step1 = document.getElementById('step1');
 const sensationsContainer = document.getElementById('sensationsContainer');
@@ -56,16 +52,22 @@ function appendHTML(container, type, innerhtml) {
   return element;
 }
 
-function createCheckbox(value, container, addBreak) {
-  const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.value = value;
-
+function createInput(value, container, addBreak) {
   const label = document.createElement('label');
+  let input = document.createElement('input');
   label.appendChild(input);
-  label.appendChild(document.createTextNode(' ' + value));
-
+  const somethingElse = /\bsomething else\b/i;
+  if (somethingElse.test(value)){
+    input.type = 'text';
+    input.className = 'something-else-input';
+    input.setAttribute('placeholder','optional; enter something else');
+  } else{
+    input.type = 'checkbox';
+    input.value = value;
+    label.appendChild(document.createTextNode(' ' + value));
+  }
   container.appendChild(label);
+
   if (addBreak) appendHTML(container,'br').setAttribute("aria-hidden", true);
 
   return input;
@@ -84,7 +86,7 @@ function renderSensations() {
     );
 
     partSensations[part].forEach((sensation) => {
-      createCheckbox(sensation, groupDiv);
+      createInput(sensation, groupDiv);
     });
   }
 
@@ -167,7 +169,7 @@ function renderEmotion() {
   );
 
   currentEmotionData.nuancedEmotions.forEach((nuEmotion) => {
-    const cb = createCheckbox(nuEmotion, nuancedEmotionsGroupDiv);
+    const cb = createInput(nuEmotion, nuancedEmotionsGroupDiv);
     cb.dataset.type = "nuanced";
     cb.dataset.emotion = emotion;
     if (selections.nuanced[emotion].includes(nuEmotion)) cb.checked = true;
@@ -183,7 +185,7 @@ function renderEmotion() {
   );
 
   currentEmotionData.nuancedNeeds.forEach((nuNeed) => {
-    const cb = createCheckbox(nuNeed, nuancedNeedsGroupDiv, true);
+    const cb = createInput(nuNeed, nuancedNeedsGroupDiv, true);
     cb.dataset.type = "need";
     cb.dataset.emotion = emotion;
     if (selections.needs[emotion].includes(nuNeed)) cb.checked = true;
@@ -198,16 +200,33 @@ function renderEmotion() {
 
 function saveCurrentSelections() {
   const emotion = selections.emotions[currentEmotionIndex];
-  selections.nuanced[emotion] = Array.from(
+
+  const nuancedSelections = Array.from(
     document.querySelectorAll(
-      `input[data-type='nuanced'][data-emotion='${emotion}']:checked`
+      `input[data-type='nuanced'][data-emotion='${emotion}'][type='checkbox']:checked`
     )
   ).map((cb) => cb.value);
-  selections.needs[emotion] = Array.from(
+
+  const nuancedOthers = Array.from(
     document.querySelectorAll(
-      `input[data-type='need'][data-emotion='${emotion}']:checked`
+      `input[data-type='nuanced'][data-emotion='${emotion}'][type='text']`
+    )
+  ).map((input) => input.value.trim()).filter((val) => val !== "");
+  selections.nuanced[emotion] = [...nuancedSelections, ...nuancedOthers];
+
+   const needsSelections = Array.from(
+    document.querySelectorAll(
+      `input[data-type='need'][data-emotion='${emotion}'][type='checkbox']:checked`
     )
   ).map((cb) => cb.value);
+
+  const needsOther = Array.from(
+    document.querySelectorAll(
+      `input[data-type='need'][data-emotion='${emotion}'][type='text']`
+    )
+  ).map((input) => input.value.trim()).filter((val) => val !== "");
+
+  selections.needs[emotion] = [...needsSelections, ...needsOther];
 }
 
 nextEmotionBtn.addEventListener("click", () => {
@@ -307,7 +326,7 @@ function renderSummary() {
       emotionNeeds.forEach((need) => {
         appendHTML(needsNested, 'li', need);
       });
-    } 
+    }
   });
 
   setTimeout(() => summaryContainer.focus());

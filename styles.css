@@ -7,9 +7,6 @@
     border-bottom: 1px solid black;
     padding: 5px 0;
   }
-  .checkbox-list {
-    padding-inline-start: 0;
-  }
   button { margin-top: .5rem; margin-right: .5rem; }
   .sr-only {
     position: absolute;
@@ -29,4 +26,15 @@
   }
   .checkbox-group input[type="checkbox"] {
     margin-right: 0.5rem; /* Adjust spacing as needed */
+  }
+  .something-else-input {
+    margin-left: 0.5rem;
+    padding: 0.2rem;
+    font-size: 1rem;
+    /* display: none; */
+  }
+
+  label:has(input[type="checkbox"]:checked) {
+    font-weight: bold;
+    text-decoration: underline;
   }
